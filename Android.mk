@@ -24,8 +24,9 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/GL
 
 LOCAL_SRC_FILES := \
 	nanogl.cpp \
-	nanoWrap.cpp
+	nanoWrap.cpp \
+	eglwrap.cpp
   
 
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
