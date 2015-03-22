@@ -25,19 +25,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <dlfcn.h>
 
 //#include <cutils/log.h>
-#include <android/log.h>
 
 #include "nanogl.h"
 #include "glesinterface.h"
 #include "gl.h"
 
-#define LOG __android_log_print
+
 #define DEBUG_NANO 0
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOG __android_log_print
 
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define LOGD(...) if (DEBUG_NANO) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG,__VA_ARGS__)
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG,__VA_ARGS__)
+#else
+
+#define LOGI(...) printf("I: "__VA_ARGS__)
+#define LOGD(...) if(DEBUG_NANO) printf("D: "__VA_ARGS__) 
+#define LOGE(...) printf("E: "__VA_ARGS__)
+#define LOGW(...) printf("W: "__VA_ARGS__)
+
+#endif
+
 
 #define GL_ENTRY(_r, _api, ...) #_api,
 
