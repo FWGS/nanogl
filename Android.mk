@@ -28,5 +28,7 @@ LOCAL_SRC_FILES := \
 	eglwrap.cpp
   
 
+LOCAL_LDLIBS := -llog
+
 include $(BUILD_SHARED_LIBRARY)
 
