@@ -26,9 +26,8 @@ LOCAL_SRC_FILES := \
 	nanogl.cpp \
 	nanoWrap.cpp \
 	eglwrap.cpp
-  
 
 LOCAL_LDLIBS := -llog
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
