@@ -205,7 +205,7 @@ struct VertexAttrib
 #endif
     };
 
-static VertexAttrib vertexattribs[8000];
+static VertexAttrib vertexattribs[40000];
 
 static GLushort indexArray[30000];
 
