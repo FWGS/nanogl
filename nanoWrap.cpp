@@ -259,6 +259,64 @@ void InitGLStructs()
     arraysValid = GL_FALSE;
     }
 
+void ResetNanoState()
+{
+
+	if (tmuState0.color_array.enabled)
+	{
+		glEsImpl->glEnableClientState(GL_COLOR_ARRAY);
+	}
+	else
+	{
+		glEsImpl->glDisableClientState(GL_COLOR_ARRAY);
+	}
+
+	if (tmuState0.vertex_array.enabled)
+	{
+		glEsImpl->glEnableClientState(GL_VERTEX_ARRAY);
+	}
+	else
+	{
+		glEsImpl->glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	if (tmuState0.texture_coord_array.enabled)
+	{
+		glEsImpl->glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+	else
+	{
+		glEsImpl->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+	glEsImpl->glVertexPointer(tmuState0.vertex_array.size,
+			tmuState0.vertex_array.type,
+			tmuState0.vertex_array.stride,
+			tmuState0.vertex_array.ptr);
+
+	glEsImpl->glTexCoordPointer(tmuState0.texture_coord_array.size,
+			tmuState0.texture_coord_array.type,
+			tmuState0.texture_coord_array.stride,
+			tmuState0.texture_coord_array.ptr);
+
+	glEsImpl->glColorPointer(tmuState0.color_array.size,
+			tmuState0.color_array.type,
+			tmuState0.color_array.stride,
+			tmuState0.color_array.ptr);
+
+	glEsImpl->glMatrixMode(nanoglState.matrixmode);
+
+
+
+	glEsImpl->glColor4f (currentVertexAttrib.red, currentVertexAttrib.green, currentVertexAttrib.blue, currentVertexAttrib.alpha);
+
+	glEsImpl->glBlendFunc(nanoglState.sfactor, nanoglState.dfactor);
+
+	//glEsImpl->glBindTexture(GL_TEXTURE_2D, stackTextureState);
+
+	glEsImpl->glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, activetmuState->texture_env_mode.value);
+
+	arraysValid = GL_FALSE;
+}
 
 void FlushOnStateChange()
     {
