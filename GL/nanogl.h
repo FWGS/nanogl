@@ -27,7 +27,9 @@ extern "C" {
 
 int nanoGL_Init(void);
 void nanoGL_Destroy(void);
-
+void nanoGL_Flush();
+void *nanoGL_GetProcAddress(const char *);
+void nanoGL_Reset();
 #ifdef __cplusplus
 }
 #endif

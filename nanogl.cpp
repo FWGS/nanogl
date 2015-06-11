@@ -70,6 +70,10 @@ static void gl_unimplemented() {
 	LOGE ("Called unimplemented OpenGL ES API\n"); 
 }
 
+void *nanoGL_GetProcAddress(const char *name)
+{
+	return dlsym(glesLib, name);
+}
 
 static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void * default_func )
 {
@@ -92,7 +96,7 @@ static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void
 	{
 		void * f;
 		
-		f = dlsym(lib, *api); // ltry ibGLESxx_CM.so
+		f = dlsym(lib, *api); // try libGLESxx_CM.so
 
 		if (f == NULL) {
 			LOGW( "<%s> not found in %s. Trying libEGL.so.", *api, name); //driver);

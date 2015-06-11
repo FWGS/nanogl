@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gl.h"
 #include "glesinterface.h"
+#include "nanogl.h"
 
 #define GL_TEXTURE0_ARB                     0x84C0
 #define GL_TEXTURE1_ARB                     0x84C1
@@ -360,7 +361,14 @@ void FlushOnStateChange()
     ptrIndexArray = indexArray;
     useTexCoordArray = GL_FALSE;
     }
-
+void nanoGL_Flush()
+	{
+	FlushOnStateChange();
+	}
+void nanoGL_Reset()
+{
+	ResetNanoState();
+}
 void glBegin(GLenum mode)
     {
     wrapperPrimitiveMode = mode;
@@ -1412,7 +1420,7 @@ void glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 
 GLenum glGetError (void)
     {
-    FlushOnStateChange();
+    //FlushOnStateChange();
     return GL_NO_ERROR;//glEsImpl->glGetError();
     }
 
