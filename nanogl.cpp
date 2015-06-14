@@ -72,6 +72,20 @@ static void gl_unimplemented() {
 
 void *nanoGL_GetProcAddress(const char *name)
 {
+#if defined(__MULTITEXTURE_SUPPORT__)
+	if (!strcmp(procname, "glMultiTexCoord2fARB"))
+	{
+		return (void*)&glMultiTexCoord2fARB;
+	}
+	else if (!strcmp(procname, "glActiveTextureARB"))
+	{
+		return (void*)&glActiveTexture;
+	}
+	else if (!strcmp(procname, "glClientActiveTextureARB"))
+	{
+		return (void*)&glClientActiveTexture;
+	}
+#endif
 	return dlsym(glesLib, name);
 }
 
