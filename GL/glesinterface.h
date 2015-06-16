@@ -28,7 +28,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     #endif
 #endif
 
+#ifdef SOFTFP_LINK
 #define S __attribute__((pcs("aapcs")))
+#else
+#define S
+#endif
 
 struct GlESInterface
     {
