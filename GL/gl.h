@@ -573,10 +573,10 @@ typedef int GLclampx;
 
 // Vladimir
 #define glVertex2i(x,y) glVertex3f(x,y,0.0)
-#define glTexCoord2d glTexCoord2f
+//#define glTexCoord2d glTexCoord2f
 #define glVertex3d glVertex3f
 //#define glColor4ub(x,y,z,p) glColor4f(x,y,z,p) //nicknekit: wtf???
-#define glFogi glFogf
+//#define glFogi glFogf
 //
 
 void glBegin(GLenum mode);
@@ -673,7 +673,28 @@ void glFrontFace (GLenum mode);
 
 
 //nicknekit: for xash3d
-
+void glGetDoublev( GLenum pname, GLdouble *params);
+void glIndexPointer( GLenum type, GLsizei stride, const GLvoid *pointer );
+void glTexCoord1f( GLfloat s );
+void glTexCoord3f( GLfloat s, GLfloat t, GLfloat r );
+void glTexCoord4f( GLfloat s, GLfloat t, GLfloat r, GLfloat q);
+void glTexGenf( GLenum coord, GLenum pname, GLfloat param );
+void glRasterPos2f( GLfloat x, GLfloat y );
+void glPushAttrib( GLbitfield mask );
+void glPopAttrib( );
+void glLoadMatrixd( GLdouble *m );
+void glMultMatrixd( GLdouble *m );
+void glRotated( GLdouble angle, GLdouble x, GLdouble y, GLdouble z );
+void glScaled( GLdouble x, GLdouble y, GLdouble z);
+void glTranslated( GLdouble x, GLdouble y, GLdouble z );
+void glDrawPixels( GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels );
+GLboolean glIsList( GLuint list );
+void glPixelStoref( GLenum pname, GLfloat param ) ;
+void glCopyTexImage1D( GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLint border );
+void glCopyTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width );
+void glPolygonStipple( const GLubyte *mask );
+void glGetClipPlane( GLenum plane, const GLdouble *equation );
+void glFogi( GLenum pname, GLint param );
 void glColor3ub( GLubyte red, GLubyte green, GLubyte blue);
 void glNormal3fv( const GLfloat *v );
 void glCopyTexImage2D( GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border );
@@ -690,6 +711,19 @@ GLboolean glIsTexture(GLuint texture);
 void glTexGeni( GLenum coord, GLenum pname, GLint param );
 void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params );
 void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha);
+void glTexEnvi( GLenum target, GLenum pname, GLint param );
+void glTexEnvfv( GLenum target, GLenum pname, GLfloat *params );
+void glCopyTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height );
+void glGetTexEnviv( GLenum target, GLenum pname, GLint *params );
+void glNormal3f( GLfloat nx, GLfloat ny, GLfloat nz );
+void glGetBooleanv( GLenum pname, GLboolean *params );
+void glNormalPointer( GLenum type, GLsizei stride, const GLvoid *pointer );
+void glIsEnabled( GLenum cap );
+
+
+#ifdef __MULTITEXTURE_SUPPORT__
+void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
+#endif
 
 
 #ifdef __cplusplus

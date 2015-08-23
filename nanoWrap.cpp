@@ -1176,6 +1176,91 @@ void glColor3fv( const GLfloat *v )
 
 //-- nicknekit: xash3d funcs --
 
+void glGetDoublev( GLenum pname, GLdouble *params)
+    {
+    glGetFloatv( pname, (GLfloat *)params );
+    }
+    
+void glIndexPointer( GLenum type, GLsizei stride, const GLvoid *pointer ) { }
+void glTexCoord1f( GLfloat s )
+{
+    glTexCoord2f( s, 0 );
+}
+
+void glTexCoord3f( GLfloat s, GLfloat t, GLfloat r )
+{
+    glTexCoord2f( s, t );
+}
+
+void glTexCoord4f( GLfloat s, GLfloat t, GLfloat r, GLfloat q)
+{
+    glTexCoord2f( s, t );
+}
+
+void glTexGenf( GLenum coord, GLenum pname, GLfloat param )
+{
+    
+}
+
+void glRasterPos2f( GLfloat x, GLfloat y ) { }
+
+void glPushAttrib( GLbitfield mask ) { }
+
+void glPopAttrib( ) { }
+
+void glLoadMatrixd( GLdouble *m ) 
+{
+    glLoadMatrixf( (GLfloat *)m);
+}
+
+void glMultMatrixd( GLdouble *m ) 
+{
+    glMultMatrixf( (GLfloat *)m );
+}
+
+void glRotated( GLdouble angle, GLdouble x, GLdouble y, GLdouble z ) 
+{
+    glRotatef( angle, x, y, z );
+}
+
+void glScaled( GLdouble x, GLdouble y, GLdouble z) 
+{
+    glScalef( x, y, z ); 
+}
+
+void glTranslated( GLdouble x, GLdouble y, GLdouble z ) 
+{
+    glTranslatef( x, y, z);
+}
+
+void glDrawPixels( GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels ) { }
+
+GLboolean glIsList( GLuint list ) { }
+
+void glPixelStoref( GLenum pname, GLfloat param ) 
+{
+    glPixelStorei( pname, param ); 
+}
+
+void glCopyTexImage1D( GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLint border )
+{
+    glCopyTexImage2D( target, level, internalFormat, x, y, width, 0, border );
+}
+
+void glCopyTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width ) 
+{
+	glCopyTexSubImage2D( target, level, xoffset, 0, x, y, width, 0 );
+}
+
+void glPolygonStipple( const GLubyte *mask ) { }
+
+void glGetClipPlane( GLenum plane, const GLdouble *equation ) { }
+
+void glFogi( GLenum pname, GLint param ) 
+{
+    glFogf( pname, param );
+}
+
 void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
     {
     currentVertexAttrib.red = red;
@@ -1246,6 +1331,56 @@ void glTexGeni( GLenum coord, GLenum pname, GLint param )
 void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params )
 {
 //for mirrors? not needed for original hl?
+}
+
+void glTexEnvi( GLenum target, GLenum pname, GLint param )
+{
+	FlushOnStateChange();
+	glEsImpl->glTexEnvi( target, pname, param );
+}
+
+void glTexEnvfv( GLenum target, GLenum pname, GLfloat *params )
+{
+	for( ; params; params++ )
+	{
+		glTexEnvf( target, pname, *params );
+	}
+}
+
+void glCopyTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height )
+{
+	FlushOnStateChange();
+	glEsImpl->glCopyTexSubImage2D( target, level, xoffset, yoffset, x, y, width, height );
+}
+
+void glGetTexEnviv( GLenum target, GLenum pname, GLint *params )
+{
+	FlushOnStateChange();
+	glEsImpl->glGetTexEnviv( target, pname, params );
+}
+
+void glNormal3f( GLfloat nx, GLfloat ny, GLfloat nz )
+{
+	FlushOnStateChange();
+	glEsImpl->glNormal3f( nx, ny, nz );
+}
+
+void glGetBooleanv( GLenum pname, GLboolean *params )
+{
+	FlushOnStateChange();
+	glEsImpl->glGetBooleanv( pname, params );
+}
+
+void glNormalPointer( GLenum type, GLsizei stride, const GLvoid *pointer )
+{
+	FlushOnStateChange();
+	glEsImpl->glNormalPointer( type, stride, pointer );
+}
+
+void glIsEnabled( GLenum cap )
+{
+	FlushOnStateChange();
+	glEsImpl->glIsEnabled( cap );
 }
 
 //-- --//
@@ -1727,7 +1862,7 @@ void glColorPointer( GLint size,  GLenum type,  GLsizei stride,  const GLvoid *p
         tmuState0.color_array.type == type &&
         tmuState0.color_array.ptr == pointer)
         {
-        return;
+		return;
         }
     tmuState0.color_array.size = size;
     tmuState0.color_array.stride = stride;
@@ -1748,7 +1883,7 @@ void glClearStencil( GLint s ) {}
 extern "C" void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
 
 void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t )
-    {
+{
     if (target == GL_TEXTURE0)
         {
         glTexCoord2f(s,t);
