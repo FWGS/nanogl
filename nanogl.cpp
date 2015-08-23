@@ -64,13 +64,15 @@ static void* glesLib = NULL;
 
 GlESInterface* glEsImpl = NULL;
 
+int initialized = 0;
+
 extern void InitGLStructs();
 
 static void gl_unimplemented() { 
 	LOGE ("Called unimplemented OpenGL ES API\n"); 
 }
 
-void *nanoGL_GetProcAddress(const char *name)
+void *nanoGL_GetProcAddress(const char *procname)
 {
 #if defined(__MULTITEXTURE_SUPPORT__)
 	if (!strcmp(procname, "glMultiTexCoord2fARB"))
@@ -86,7 +88,7 @@ void *nanoGL_GetProcAddress(const char *name)
 		return (void*)&glClientActiveTexture;
 	}
 #endif
-	return dlsym(glesLib, name);
+	return dlsym(glesLib, procname);
 }
 
 static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void * default_func )
@@ -153,6 +155,8 @@ static int loadDriver(const char * name) {
  */
 int nanoGL_Init()
 {
+	if( initialized ) return 1;
+
 	const char * lib1 = "libGLESv1_CM.so"; 	// Has both gl* & egl* funcs SDK < 1.5
 	const char * lib2 = "libGLESv2.so"; 	// Only gl* funcs SDK >= 1.5
 	const char * lib3 = "libEGL.so"; 		// Only egl* funcs SDK >= 1.5
@@ -201,6 +205,7 @@ int nanoGL_Init()
 
 	// Init nanoGL
 	InitGLStructs();
+	initialized = 1;
 	return 1;
 }
 
