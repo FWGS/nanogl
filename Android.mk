@@ -18,28 +18,16 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := NanoGL
 
-LOCAL_CFLAGS += $(CFLAGS_OPT)
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a-hard)
-LOCAL_CFLAGS += $(CFLAGS_OPT_ARM) -mfloat-abi=hard -mhard-float -DLOAD_HARDFP -DSOFTFP_LINK
-endif
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-LOCAL_CFLAGS += $(CFLAGS_OPT_ARM) -mfloat-abi=softfp
-endif
-ifeq ($(TARGET_ARCH_ABI),armeabi)
-LOCAL_CFLAGS += $(CFLAGS_OPT_ARMv5)
-endif
-ifeq ($(TARGET_ARCH_ABI),x86)
-LOCAL_CFLAGS += $(CFLAGS_OPT_X86)
-endif
+include $(XASH3D_CONFIG)
 
 LOCAL_CFLAGS +=
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/GL
 
 LOCAL_SRC_FILES := \
-	nanogl.cpp \
-	nanoWrap.cpp \
-	eglwrap.cpp
+	nanogl.c \
+	nanoWrap.c \
+	eglwrap.c
 
 LOCAL_LDLIBS := -llog
 

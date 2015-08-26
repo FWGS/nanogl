@@ -26,8 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <string.h>
 
 
-extern "C++" GlESInterface* glEsImpl;
-extern "C++" void FlushOnStateChange();
+extern GlESInterface* glEsImpl;
+extern void FlushOnStateChange();
 
 
 EGLint eglGetError (void)
@@ -55,7 +55,7 @@ const char * eglQueryString (EGLDisplay dpy, EGLint name)
     }
 
 #if defined(__MULTITEXTURE_SUPPORT__)
-extern "C" void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
+void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
 #endif
 
 void * eglGetProcAddress (const char *procname)

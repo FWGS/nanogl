@@ -163,7 +163,7 @@ static struct nanotmuState tmuInitState =
 
 static struct nanotmuState* activetmuState = &tmuState0;
 
-extern "C++" GlESInterface* glEsImpl;
+extern GlESInterface* glEsImpl;
 
 static GLenum wrapperPrimitiveMode = GL_QUADS;
 GLboolean useTexCoordArray = GL_FALSE;
@@ -185,7 +185,7 @@ GLboolean useMultiTexCoordArray = GL_FALSE;
 static GLboolean delayedttmuchange = GL_FALSE;
 static GLenum delayedtmutarget = GL_TEXTURE0;
 
-struct VertexAttrib
+typedef struct VertexAttrib_s
     {
     float x;
     float y;
@@ -204,7 +204,7 @@ struct VertexAttrib
     float s_multi;
     float t_multi;
 #endif
-    };
+    } VertexAttrib;
 
 static VertexAttrib vertexattribs[40000];
 
@@ -244,7 +244,7 @@ void InitGLStructs()
     memcpy(&nanoglState, &nanoglInitState, sizeof(struct nanoState));
     memcpy(&tmuState0,&tmuInitState,sizeof(struct nanotmuState));
     memcpy(&tmuState1,&tmuInitState,sizeof(struct nanotmuState));    
-    memcpy(&currentVertexAttrib,&currentVertexAttribInit,sizeof(struct VertexAttrib));
+    memcpy(&currentVertexAttrib,&currentVertexAttribInit,sizeof(VertexAttrib));
     
     activetmuState = &tmuState0;
     wrapperPrimitiveMode = GL_QUADS;
@@ -400,8 +400,8 @@ void glEnd(void)
             break;
         case GL_TRIANGLES:
             {
-            int  vcount = (vertexCount-vertexMark)/3;
-            for (int count = 0; count < vcount; count++)
+            int count, vcount = (vertexCount-vertexMark)/3;
+            for (count = 0; count < vcount; count++)
                 {
                 *ptrIndexArray++ = indexCount;
                 *ptrIndexArray++ = indexCount+1;
@@ -419,6 +419,8 @@ void glEnd(void)
             int vcount = ((vertexCount-vertexMark)-3);
             if (vcount && ((long)ptrIndexArray & 0x02))
                 {
+				unsigned int *longptr;
+				int count;
                 *ptrIndexArray++ = indexCount-1; // 2 
                 *ptrIndexArray++ = indexCount-2; // 1
                 *ptrIndexArray++ = indexCount;   // 3
@@ -426,9 +428,9 @@ void glEnd(void)
                 vcount-=1;    
                 int odd = vcount&1;
                 vcount/=2;
-                unsigned int* longptr = (unsigned int*) ptrIndexArray;
+                longptr = (unsigned int*) ptrIndexArray;
 
-                for (int count = 0; count < vcount; count++)
+                for (count = 0; count < vcount; count++)
                     {
                     *(longptr++) = (indexCount-2) | ((indexCount-1)<<16);                    
                     *(longptr++) = (indexCount) | ((indexCount)<<16);                    
@@ -447,11 +449,13 @@ void glEnd(void)
            else
                 {
                 //already aligned
+                unsigned int *longptr;
+                int count;
                 int odd = vcount&1;
                 vcount/=2;
-                unsigned int* longptr = (unsigned int*) ptrIndexArray;
+                longptr = (unsigned int*) ptrIndexArray;
 
-                for (int count = 0; count < vcount; count++)
+                for (count = 0; count < vcount; count++)
                     {                    
                     *(longptr++) = (indexCount-1) | ((indexCount-2)<<16);                    
                     *(longptr++) = (indexCount) | ((indexCount-1)<<16);                    
@@ -475,11 +479,12 @@ void glEnd(void)
         case GL_POLYGON:
         case GL_TRIANGLE_FAN:
             {
+			int count, vcount = ((vertexCount-vertexMark)-3);
             *ptrIndexArray++ = indexCount++;
             *ptrIndexArray++ = indexCount++;
             *ptrIndexArray++ = indexCount++;
-            int vcount = ((vertexCount-vertexMark)-3);
-            for (int count = 0; count < vcount; count++)
+            
+            for (count = 0; count < vcount; count++)
                 {
                 *ptrIndexArray++ = indexbase;
                 *ptrIndexArray++ = indexCount-1;
@@ -1037,7 +1042,7 @@ void glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei wid
     glEsImpl->glTexImage2D(target, level, internalformat, width, height,border,format,type,pixels);
     }
 
-void glDrawBuffer(GLenum /*mode*/)
+void glDrawBuffer(GLenum mode)
     {
     }
 
@@ -1395,7 +1400,7 @@ void glReadPixels (GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
     glEsImpl->glReadPixels(x,y,width,height,format,type,pixels);
     }
 
-void glReadBuffer( GLenum /*mode*/ )
+void glReadBuffer( GLenum mode )
     {
     
     }
@@ -1745,7 +1750,7 @@ void glClearStencil( GLint s ) {}
 
 #if defined(__MULTITEXTURE_SUPPORT__)
 
-extern "C" void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
+void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
 
 void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t )
     {

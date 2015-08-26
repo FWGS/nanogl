@@ -34,7 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define S
 #endif
 
-struct GlESInterface
+typedef struct GlESInterface_s
     {
 
     int (*eglChooseConfig) (int dpy, const int *attrib_list, int *configs, int config_size, int *num_config) S;
@@ -53,7 +53,7 @@ struct GlESInterface
     int (*eglGetDisplay) (int display) S;
     int (*eglGetError) (void) S;
 
-    void (*(*eglGetProcAddress) (const char *procname))(...) S;
+    void *(*eglGetProcAddress) (const char *procname) S;
 
     int (*eglInitialize) (int dpy, int *major, int *minor) S;
     int (*eglMakeCurrent) (int dpy, int draw, int read, int ctx) S;
@@ -216,7 +216,7 @@ struct GlESInterface
     int (*eglReleaseTexImage) (int dpy, int surface, int buffer) S;
     int (*eglSurfaceAttrib) (int dpy, int surface, int attribute, int value) S;
 
-    };
+    } GlESInterface;
 #if !defined (__WINS__)
     #if	defined(__TARGET_FPU_VFP)
         #pragma no_softfp_linkage
