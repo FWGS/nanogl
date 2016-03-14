@@ -1421,7 +1421,7 @@ void glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 GLenum glGetError (void)
     {
     //FlushOnStateChange();
-    return GL_NO_ERROR;//glEsImpl->glGetError();
+    return glEsImpl->glGetError();
     }
 
 void glActiveTexture (GLenum texture)
