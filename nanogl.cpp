@@ -66,7 +66,7 @@ GlESInterface* glEsImpl = NULL;
 
 extern void InitGLStructs();
 
-static void gl_unimplemented() { 
+void gl_unimplemented() {
 	LOGE ("Called unimplemented OpenGL ES API\n"); 
 }
 
@@ -127,8 +127,11 @@ static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void
 					LOGD ("<%s> @ 0x%p\n", *api, f);
 				}
 			}
-			else 
+			else
+			{
+				LOGE ( "libEGL.so not loaded!");
 				f = default_func;
+			}
 		}
 		else {
 			LOGD ("<%s> @ 0x%p\n", *api, f);

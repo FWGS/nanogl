@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern "C++" GlESInterface* glEsImpl;
 extern "C++" void FlushOnStateChange();
-
+void gl_unimplemented();
 
 EGLint eglGetError (void)
     {
@@ -159,10 +159,14 @@ EGLContext eglGetCurrentContext (void)
     }
 EGLSurface eglGetCurrentSurface (EGLint readdraw)
     {
+	if( (void*)glEsImpl->eglGetCurrentSurface == (void*)gl_unimplemented )
+		return EGL_NO_SURFACE;
     return glEsImpl->eglGetCurrentSurface(readdraw);
     }
 EGLDisplay eglGetCurrentDisplay (void)
     {
+	if( (void*)glEsImpl->eglGetCurrentDisplay == (void*)gl_unimplemented )
+		return EGL_NO_DISPLAY;
     return glEsImpl->eglGetCurrentDisplay();
     }
     

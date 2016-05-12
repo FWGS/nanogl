@@ -36,7 +36,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct GlESInterface
     {
-
     int (*eglChooseConfig) (int dpy, const int *attrib_list, int *configs, int config_size, int *num_config) S;
 	int (*eglCopyBuffers) (int dpy, int surface, void* target) S;
     int (*eglCreateContext) (int dpy, int config, int share_list, const int *attrib_list) S;
