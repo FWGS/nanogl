@@ -181,4 +181,7 @@
     GL_ENTRY(int,eglReleaseTexImage,int dpy, int surface, int buffer)
     GL_ENTRY(int,eglSurfaceAttrib,int dpy, int surface, int attribute, int value)
 
-
+#ifdef USE_CORE_PROFILE
+    GL_ENTRY(void,glOrtho,double left, double right, double bottom, double top, double zNear, double zFar)
+    GL_ENTRY(void,glDepthRange,double zNear, double zFar)
+#endif

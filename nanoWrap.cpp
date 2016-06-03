@@ -324,7 +324,9 @@ void FlushOnStateChange()
     if (delayedttmuchange)
         {
         delayedttmuchange = GL_FALSE;
+#ifndef USE_CORE_PROFILE
         glEsImpl->glActiveTexture(delayedtmutarget);
+#endif
         }
 
     if (!vertexCount)
@@ -994,7 +996,11 @@ void glColor4f (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 void glOrtho (GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar)
     {
     FlushOnStateChange();
+#ifdef USE_CORE_PROFILE
+	glEsImpl->glOrtho(left,right,bottom,top, zNear,zFar);
+#else
     glEsImpl->glOrthof(left,right,bottom,top, zNear,zFar);
+#endif
     }
 
 void glMatrixMode (GLenum mode)
@@ -1071,7 +1077,11 @@ void glDepthRange(GLclampf zNear, GLclampf zFar)
         nanoglState.depth_range_far = zFar;
         }
     FlushOnStateChange();
+#ifdef USE_CORE_PROFILE
+	glEsImpl->glDepthRange(zNear, zFar);
+#else
     glEsImpl->glDepthRangef(zNear, zFar);
+#endif
     }
 
 void glDepthFunc (GLenum func)

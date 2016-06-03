@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern "C++" GlESInterface* glEsImpl;
 extern "C++" void FlushOnStateChange();
-void gl_unimplemented();
+void APIENTRY gl_unimplemented(GLenum none);
 
 EGLint eglGetError (void)
     {
