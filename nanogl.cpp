@@ -89,21 +89,13 @@ void APIENTRY gl_unimplemented(GLenum none) {
 
 void *nanoGL_GetProcAddress(const char *name)
 {
-#if defined(__MULTITEXTURE_SUPPORT__)
-	if (!strcmp(procname, "glMultiTexCoord2fARB"))
-	{
-		return (void*)&glMultiTexCoord2fARB;
-	}
-	else if (!strcmp(procname, "glActiveTextureARB"))
-	{
-		return (void*)&glActiveTexture;
-	}
-	else if (!strcmp(procname, "glClientActiveTextureARB"))
-	{
-		return (void*)&glClientActiveTexture;
-	}
+	void *addr = NULL;
+#ifdef XASH_SDL
+	addr = SDL_GL_GetProcAddress( name ); 
+	if( !addr )
 #endif
-	return dlsym(glesLib, name);
+	addr = dlsym(glesLib, name);
+	return addr;
 }
 
 static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void * default_func )
@@ -303,4 +295,3 @@ void nanoGL_Destroy()
 	// release lib
 	dlclose(glesLib);
 }
-
