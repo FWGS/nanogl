@@ -1839,11 +1839,11 @@ void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t )
 #endif
 
 /* Vladimir  */
-void glDrawArrays( GLenum mode, int first, int count)
+/*void glDrawArrays( GLenum mode, int first, int count)
 {
     FlushOnStateChange();
     glEsImpl->glDrawArrays(mode, first , count);
-}
+}*/
 void glMultMatrixf (const GLfloat *m)
 {
     FlushOnStateChange();
@@ -1942,16 +1942,114 @@ void glTexEnvi (GLenum target, GLenum pname, GLint param)
     glEsImpl->glTexEnvi(target, pname, param);
     }
 
-void pglMultiTexCoord3f(GLenum, GLfloat, GLfloat, GLfloat)
+void glMultiTexCoord3fARB(GLenum, GLfloat, GLfloat, GLfloat)
 {
 
 }
 
-void pglMultiTexCoord2f(GLenum, GLfloat, GLfloat)
+void glMultiTexCoord2f(GLenum, GLfloat, GLfloat)
 {
 
 }
+void glDrawArrays( GLenum mode, GLint first, GLsizei count )
+	{
+	// ensure that all primitives specified between glBegin/glEnd pairs
+	// are rendered first, and that we have correct tmu in use..
+	if( mode == GL_QUADS ) mode = GL_TRIANGLE_FAN;
+	FlushOnStateChange();
+	// setup correct vertex/color/texcoord pointers
+	if (arraysValid ||
+		tmuState0.vertex_array.changed ||
+		tmuState0.color_array.changed ||
+		tmuState0.texture_coord_array.changed || tmuState0.normal_array.changed)
+		{
+		glEsImpl->glClientActiveTexture(GL_TEXTURE0);
+		}
+	if (arraysValid || tmuState0.vertex_array.changed)
+		{
+		if (tmuState0.vertex_array.enabled)
+			{
+			glEsImpl->glEnableClientState(GL_VERTEX_ARRAY);
+			}
+		else
+			{
+			glEsImpl->glDisableClientState(GL_VERTEX_ARRAY);
+			}
+		glEsImpl->glVertexPointer(tmuState0.vertex_array.size,
+								  tmuState0.vertex_array.type,
+								  tmuState0.vertex_array.stride,
+								  tmuState0.vertex_array.ptr);
+		tmuState0.vertex_array.changed = GL_FALSE;
+		}
+	if (arraysValid || tmuState0.color_array.changed)
+		{
+		if (tmuState0.color_array.enabled)
+			{
+			glEsImpl->glEnableClientState(GL_COLOR_ARRAY);
+			}
+		else
+			{
+			glEsImpl->glDisableClientState(GL_COLOR_ARRAY);
+			}
+		glEsImpl->glColorPointer(tmuState0.color_array.size,
+								 tmuState0.color_array.type,
+								 tmuState0.color_array.stride,
+								 tmuState0.color_array.ptr);
+		tmuState0.color_array.changed = GL_FALSE;
+		}
+	if (arraysValid || tmuState0.normal_array.changed)
+		{
+		if (tmuState0.normal_array.enabled)
+			{
+			glEsImpl->glEnableClientState(GL_NORMAL_ARRAY);
+			}
+		else
+			{
+			glEsImpl->glDisableClientState(GL_NORMAL_ARRAY);
+			}
+		glEsImpl->glNormalPointer(tmuState0.normal_array.type,
+								 tmuState0.normal_array.stride,
+								 tmuState0.normal_array.ptr);
+		tmuState0.normal_array.changed = GL_FALSE;
+		}
+	if (arraysValid || tmuState0.texture_coord_array.changed)
+		{
+		tmuState0.texture_coord_array.changed = GL_FALSE;
+		if (tmuState0.texture_coord_array.enabled)
+			{
+			glEsImpl->glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
+		else
+			{
+			glEsImpl->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
+		glEsImpl->glTexCoordPointer(tmuState0.texture_coord_array.size,
+										tmuState0.texture_coord_array.type,
+										tmuState0.texture_coord_array.stride,
+										tmuState0.texture_coord_array.ptr);
+		}
 
+	if (arraysValid || tmuState1.texture_coord_array.changed)
+		{
+		tmuState1.texture_coord_array.changed = GL_FALSE;
+		glEsImpl->glClientActiveTexture(GL_TEXTURE1);
+		if (tmuState1.texture_coord_array.enabled)
+			{
+			glEsImpl->glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
+		else
+			{
+			glEsImpl->glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			}
+		glEsImpl->glTexCoordPointer(tmuState1.texture_coord_array.size,
+										tmuState1.texture_coord_array.type,
+										tmuState1.texture_coord_array.stride,
+										tmuState1.texture_coord_array.ptr);
+		}
+
+	arraysValid = GL_FALSE;
+	glEsImpl->glDrawArrays(mode, first, count);
+	}
 /*void glNormalPointer(GLenum type, GLsizei stride, const void *ptr)
 {
     glEsImpl->glNormalPointer( type, stride, ptr );
@@ -1973,7 +2071,7 @@ void glGenFramebuffers (GLsizei n, GLuint* framebuffers)
 void glGenRenderbuffers( GLsizei n, GLuint* renderbuffers )
 {
     FlushOnStateChange();
-    glEsImpl->glGenFramebuffers( n, renderbuffers );
+	glEsImpl->glGenRenderbuffers( n, renderbuffers );
 }
 
 void glBindRenderbuffer(GLenum target, GLuint renderbuffer)

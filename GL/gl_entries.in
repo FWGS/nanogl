@@ -187,12 +187,12 @@
 #endif
 
 // fbo
-GL_ENTRY(void, glGenFramebuffers, GLsizei n, GLuint* framebuffers)
-GL_ENTRY(void, glGenRenderbuffers, GLsizei n, GLuint* renderbuffers)
-GL_ENTRY(void, glRenderbufferStorage, GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
-GL_ENTRY(void, glBindFramebuffer, GLenum target, GLuint framebuffer)
-GL_ENTRY(void, glBindRenderbuffer, GLenum target, GLuint renderbuffer)
-GL_ENTRY(void, glFramebufferTexture2D, GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
-GL_ENTRY(void, glDeleteRenderbuffers, GLsizei n, const GLuint* renderbuffers)
-GL_ENTRY(void, glDeleteFramebuffers, GLsizei n, const GLuint* framebuffers)
-GL_ENTRY(void, glFramebufferRenderbuffer, GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
+GL_ENTRY(void,glGenFramebuffersOES, GLsizei n, GLuint* framebuffers)
+GL_ENTRY(void,glGenRenderbuffersOES, GLsizei n, GLuint* renderbuffers)
+GL_ENTRY(void,glRenderbufferStorageOES, GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
+GL_ENTRY(void,glBindFramebufferOES, GLenum target, GLuint framebuffer)
+GL_ENTRY(void,glBindRenderbufferOES, GLenum target, GLuint renderbuffer)
+GL_ENTRY(void,glFramebufferTexture2DOES, GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
+GL_ENTRY(void,glDeleteRenderbuffersOES, GLsizei n, const GLuint* renderbuffers)
+GL_ENTRY(void,glDeleteFramebuffersOES, GLsizei n, const GLuint* framebuffers)
+GL_ENTRY(void,glFramebufferRenderbufferOES, GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
