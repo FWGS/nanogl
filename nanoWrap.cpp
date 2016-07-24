@@ -161,7 +161,7 @@ static struct nanotmuState tmuInitState =
     {4,GL_FLOAT,0, NULL, GL_FALSE, GL_FALSE},
     {4,GL_FLOAT,0, NULL, GL_FALSE, GL_FALSE},
     {4,GL_FLOAT,0, NULL, GL_FALSE, GL_FALSE},
-    {0,GL_FLOAT,0, NULL, GL_FALSE, GL_FALSE},
+    {3,GL_FLOAT,0, NULL, GL_FALSE, GL_FALSE},
     };   
 
 static struct nanotmuState* activetmuState = &tmuState0;
@@ -1587,8 +1587,7 @@ void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indi
             {
             glEsImpl->glDisableClientState(GL_NORMAL_ARRAY);
             }
-        glEsImpl->glColorPointer(tmuState0.normal_array.size,
-                                 tmuState0.normal_array.type,
+        glEsImpl->glNormalPointer(tmuState0.normal_array.type,
                                  tmuState0.normal_array.stride,
                                  tmuState0.normal_array.ptr);
         tmuState0.normal_array.changed = GL_FALSE;
