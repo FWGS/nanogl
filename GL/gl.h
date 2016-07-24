@@ -691,6 +691,37 @@ void glTexGeni( GLenum coord, GLenum pname, GLint param );
 void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params );
 void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha);
 
+// for XashXT
+
+void glCopyTexSubImage2D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+
+void glTexEnvi(GLenum target, GLenum pname, GLint param);
+
+void glBindFramebuffer(GLenum target, GLuint framebuffer);
+void glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers);
+void glGenFramebuffers (GLsizei n, GLuint *framebuffers);
+GLenum glCheckFramebufferStatus(GLenum target);
+
+//GLboolean glIsRenderbuffer (GLuint renderbuffer);
+void glBindRenderbuffer (GLenum target, GLuint renderbuffer);
+void glDeleteRenderbuffers (GLsizei n, const GLuint *renderbuffers);
+void glGenRenderbuffers (GLsizei n, GLuint *renderbuffers);
+
+
+void glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+
+
+void glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+
+void glFramebufferRenderbuffer (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+
+
+void glNormalPointer(GLenum type, GLsizei stride, const void *ptr);
+
+void pglMultiTexCoord3f(GLenum, GLfloat, GLfloat, GLfloat);
+
+void pglMultiTexCoord2f(GLenum, GLfloat, GLfloat);
+
 
 #ifdef __cplusplus
 }

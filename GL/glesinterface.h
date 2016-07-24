@@ -229,9 +229,18 @@ struct GlESInterface
 #ifdef USE_CORE_PROFILE
 	void ( APIENTRY *glOrtho) (double left, double right, double bottom, double top, double zNear, double zFar) S;
 	void ( APIENTRY *glDepthRange) (double zNear, double zFar) S;
-#endif	
+#endif
+    void ( APIENTRY *glGenFramebuffers) (unsigned int n, unsigned int* framebuffers) S;
+    void ( APIENTRY *glGenRenderbuffers) (unsigned int n, unsigned int* renderbuffers) S;
+    void ( APIENTRY *glRenderbufferStorage) (unsigned int target, unsigned int internalformat, unsigned int width, unsigned int height) S;
+    void ( APIENTRY *glBindFramebuffer) (unsigned int target, unsigned int framebuffer) S;
+    void ( APIENTRY *glBindRenderbuffer) (unsigned int target, unsigned int renderbuffer) S;
+    void ( APIENTRY *glFramebufferTexture2D) (unsigned int target, unsigned int attachment, unsigned int textarget, unsigned int texture, int level) S;
+    void ( APIENTRY *glDeleteRenderbuffers) (unsigned int n, const unsigned int* renderbuffers) S;
+    void ( APIENTRY *glDeleteFramebuffers) (unsigned int n, const unsigned int* framebuffers) S;
+    void ( APIENTRY *glFramebufferRenderbuffer) (unsigned int target, unsigned int attachment, unsigned int renderbuffertarget, unsigned int renderbuffer) S;
 
-    };
+};
 #if !defined (__WINS__)
     #if	defined(__TARGET_FPU_VFP)
         #pragma no_softfp_linkage

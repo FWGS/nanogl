@@ -143,7 +143,11 @@ static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void
 				
 				if ( f == NULL ) {
 					LOGE ( "<%s> not found in libEGL.so", *api);
-					f = default_func; //(void*)gl_unimplemented;
+                    if( glEsImpl->eglGetProcAddress && ( (void*)glEsImpl->eglGetProcAddress != (void*)gl_unimplemented ) )
+                        f = glEsImpl->eglGetProcAddress( *api );
+                    if(f == NULL)
+                        f = default_func; //(void*)gl_unimplemented;
+
 				}
 				else {
 					LOGD ("<%s> @ 0x%p\n", *api, f);
@@ -152,6 +156,9 @@ static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void
 			else
 			{
 				LOGE ( "libEGL.so not loaded!");
+                            if( glEsImpl->eglGetProcAddress && ( (void*)glEsImpl->eglGetProcAddress != (void*)gl_unimplemented ) )
+                                f = glEsImpl->eglGetProcAddress( *api );
+                if( !f )
 				f = default_func;
 			}
 		}
