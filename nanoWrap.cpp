@@ -209,9 +209,9 @@ struct VertexAttrib
 #endif
     };
 
-static VertexAttrib vertexattribs[40000];
+static VertexAttrib vertexattribs[60000];
 
-static GLushort indexArray[30000];
+static GLushort indexArray[50000];
 
 static GLuint vertexCount = 0;
 static GLuint indexCount = 0;
@@ -511,6 +511,9 @@ void glEnd(void)
         default:
             break;
         }
+		if( ptrVertexAttribArray - vertexattribs > 20000 * sizeof(VertexAttrib) ||
+				ptrIndexArray - indexArray > 15000 * sizeof(GLushort) )
+			FlushOnStateChange();
     }
 
 void glEnable (GLenum cap)
@@ -1942,9 +1945,9 @@ void glTexEnvi (GLenum target, GLenum pname, GLint param)
     glEsImpl->glTexEnvi(target, pname, param);
     }
 
-void glMultiTexCoord3fARB(GLenum, GLfloat, GLfloat, GLfloat)
+void glMultiTexCoord3fARB(GLenum a, GLfloat b, GLfloat c, GLfloat)
 {
-
+	return glMultiTexCoord2fARB(a, b, c);
 }
 
 void glMultiTexCoord2f(GLenum, GLfloat, GLfloat)

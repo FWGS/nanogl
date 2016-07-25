@@ -719,6 +719,7 @@ void glFramebufferRenderbuffer (GLenum target, GLenum attachment, GLenum renderb
 void glNormalPointer(GLenum type, GLsizei stride, const void *ptr);
 
 void glMultiTexCoord3f(GLenum, GLfloat, GLfloat, GLfloat);
+void glMultiTexCoord3fARB(GLenum, GLfloat, GLfloat, GLfloat);
 
 void glMultiTexCoord2f(GLenum, GLfloat, GLfloat);
 
