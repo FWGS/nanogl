@@ -37,7 +37,7 @@
     GL_ENTRY(void,glClearColor,float red, float green, float blue, float alpha)
     GL_ENTRY(void,glClearColorx,int red, int green, int blue, int alpha)
     GL_ENTRY(void,glClearDepthf,float depth)
-    GL_ENTRY(void,glClearDepthx,int depth)
+	GL_ENTRY(void,glClearDepthx,int depth)
     GL_ENTRY(void,glClearStencil,int s)
     GL_ENTRY(void,glClientActiveTexture,unsigned int texture)
     GL_ENTRY(void,glColor4f,float red, float green, float blue, float alpha)
@@ -185,3 +185,14 @@
     GL_ENTRY(void,glOrtho,double left, double right, double bottom, double top, double zNear, double zFar)
     GL_ENTRY(void,glDepthRange,double zNear, double zFar)
 #endif
+
+// fbo
+GL_ENTRY(void,glGenFramebuffersOES, GLsizei n, GLuint* framebuffers)
+GL_ENTRY(void,glGenRenderbuffersOES, GLsizei n, GLuint* renderbuffers)
+GL_ENTRY(void,glRenderbufferStorageOES, GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
+GL_ENTRY(void,glBindFramebufferOES, GLenum target, GLuint framebuffer)
+GL_ENTRY(void,glBindRenderbufferOES, GLenum target, GLuint renderbuffer)
+GL_ENTRY(void,glFramebufferTexture2DOES, GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
+GL_ENTRY(void,glDeleteRenderbuffersOES, GLsizei n, const GLuint* renderbuffers)
+GL_ENTRY(void,glDeleteFramebuffersOES, GLsizei n, const GLuint* framebuffers)
+GL_ENTRY(void,glFramebufferRenderbufferOES, GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)

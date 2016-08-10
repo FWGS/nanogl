@@ -143,7 +143,11 @@ static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void
 				
 				if ( f == NULL ) {
 					LOGE ( "<%s> not found in libEGL.so", *api);
-					f = default_func; //(void*)gl_unimplemented;
+                    if( glEsImpl->eglGetProcAddress && ( (void*)glEsImpl->eglGetProcAddress != (void*)gl_unimplemented ) )
+                        f = (void*)glEsImpl->eglGetProcAddress( *api );
+                    if(f == NULL)
+                        f = (void*)default_func; //(void*)gl_unimplemented;
+
 				}
 				else {
 					LOGD ("<%s> @ 0x%p\n", *api, f);
@@ -152,7 +156,10 @@ static int CreateGlEsInterface( const char * name, void * lib, void * lib1, void
 			else
 			{
 				LOGE ( "libEGL.so not loaded!");
-				f = default_func;
+                            if( glEsImpl->eglGetProcAddress && ( (void*)glEsImpl->eglGetProcAddress != (void*)gl_unimplemented ) )
+                                f = (void*)glEsImpl->eglGetProcAddress( *api );
+                if( !f )
+				f = (void*)default_func;
 			}
 		}
 		else {
@@ -277,6 +284,19 @@ int nanoGL_Init()
 		dlclose(glesLib);
 	    return 0;
     }
+
+#ifdef __ANDROID__
+	// somewhy it does not initialize correctly
+	*((void**)&glEsImpl->glGenFramebuffers) = (void*)glEsImpl->eglGetProcAddress( "glGenFramebuffersOES" );
+	*((void**)&glEsImpl->glGenRenderbuffers) = (void*)glEsImpl->eglGetProcAddress( "glGenRenderbuffersOES" );
+	*((void**)&glEsImpl->glRenderbufferStorage) = (void*)glEsImpl->eglGetProcAddress( "glRenderbufferStorageOES" );
+	*((void**)&glEsImpl->glBindFramebuffer) = (void*)glEsImpl->eglGetProcAddress( "glBindFramebufferOES" );
+	*((void**)&glEsImpl->glBindRenderbuffer) = (void*)glEsImpl->eglGetProcAddress( "glBindRenderbufferOES" );
+	*((void**)&glEsImpl->glFramebufferTexture2D) = (void*)glEsImpl->eglGetProcAddress( "glFramebufferTexture2DOES" );
+	*((void**)&glEsImpl->glDeleteRenderbuffers) = (void*)glEsImpl->eglGetProcAddress( "glDeleteRenderbuffersOES" );
+	*((void**)&glEsImpl->glDeleteFramebuffers) = (void*)glEsImpl->eglGetProcAddress( "glDeleteFramebuffersOES" );
+	*((void**)&glEsImpl->glFramebufferRenderbuffer) = (void*)glEsImpl->eglGetProcAddress( "glFramebufferRenderbufferOES" );
+#endif
 
 	// Init nanoGL
 	InitGLStructs();
