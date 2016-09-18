@@ -1945,6 +1945,7 @@ void glTexEnvi (GLenum target, GLenum pname, GLint param)
     glEsImpl->glTexEnvi(target, pname, param);
     }
 
+#ifdef __MULTITEXTURE_SUPPORT__
 void glMultiTexCoord3fARB(GLenum a, GLfloat b, GLfloat c, GLfloat)
 {
 	return glMultiTexCoord2fARB(a, b, c);
@@ -1954,6 +1955,7 @@ void glMultiTexCoord2f(GLenum, GLfloat, GLfloat)
 {
 
 }
+#endif
 void glDrawArrays( GLenum mode, GLint first, GLsizei count )
 	{
 	// ensure that all primitives specified between glBegin/glEnd pairs

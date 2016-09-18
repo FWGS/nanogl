@@ -87,6 +87,10 @@ void APIENTRY gl_unimplemented(GLenum none) {
 #endif
 }
 
+#ifdef XASH_SDL
+#include "SDL.h"
+#endif
+
 void *nanoGL_GetProcAddress(const char *name)
 {
 	void *addr = NULL;
