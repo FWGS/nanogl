@@ -60,6 +60,7 @@ struct nanoState
 	GLboolean scissor_test;
 	GLboolean stencil_test;
 	GLboolean depthmask;
+	GLboolean stupidglesbug;
 	GLclampf depth_range_near;
 	GLclampf depth_range_far;
 	GLenum depth_func;
@@ -73,7 +74,7 @@ struct nanoState
 static struct nanoState nanoglState;
 
 static struct nanoState nanoglInitState =
-    {
+{
         GL_FALSE,
         GL_FALSE,
         GL_FALSE,
@@ -99,6 +100,7 @@ static struct nanoState nanoglInitState =
         GL_FALSE,
         GL_FALSE,
         GL_TRUE,
+		GL_FALSE,
         0.0f,
         1.0f,
         GL_LESS,
@@ -989,10 +991,19 @@ void glLoadIdentity( void )
 }
 
 void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
-{
-	currentVertexAttrib.red   = (unsigned char)ClampTo255( red * 255.0f );
-	currentVertexAttrib.green = (unsigned char)ClampTo255( green * 255.0f );
-	currentVertexAttrib.blue  = (unsigned char)ClampTo255( blue * 255.0f );
+{	
+	if( nanoglState.stupidglesbug )
+	{
+		currentVertexAttrib.red = (unsigned char)ClampTo255( ( red * alpha ) * 255.0f );
+		currentVertexAttrib.green = (unsigned char)ClampTo255( ( green * alpha ) * 255.0f );
+		currentVertexAttrib.blue = (unsigned char)ClampTo255( ( blue * alpha ) * 255.0f );
+	}
+	else
+	{
+		currentVertexAttrib.red   = (unsigned char)ClampTo255( red * 255.0f );
+		currentVertexAttrib.green = (unsigned char)ClampTo255( green * 255.0f );
+		currentVertexAttrib.blue  = (unsigned char)ClampTo255( blue * 255.0f );
+	}
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( alpha * 255.0f );
 }
 
@@ -1153,10 +1164,19 @@ void glVertex3f( GLfloat x, GLfloat y, GLfloat z )
 }
 
 void glColor4fv( const GLfloat *v )
-{
-	currentVertexAttrib.red   = (unsigned char)ClampTo255( v[0] * 255.0f );
-	currentVertexAttrib.green = (unsigned char)ClampTo255( v[1] * 255.0f );
-	currentVertexAttrib.blue  = (unsigned char)ClampTo255( v[2] * 255.0f );
+{	
+	if( nanoglState.stupidglesbug )
+	{
+		currentVertexAttrib.red = (unsigned char)ClampTo255( ( v[0] * v[3] ) * 255.0f );
+		currentVertexAttrib.green = (unsigned char)ClampTo255( ( v[1] * v[3] ) * 255.0f );
+		currentVertexAttrib.blue = (unsigned char)ClampTo255( ( v[2] * v[3] ) * 255.0f );
+	}
+	else
+	{
+		currentVertexAttrib.red   = (unsigned char)ClampTo255( v[0] * 255.0f );
+		currentVertexAttrib.green = (unsigned char)ClampTo255( v[1] * 255.0f );
+		currentVertexAttrib.blue  = (unsigned char)ClampTo255( v[2] * 255.0f );
+	}
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( v[3] * 255.0f );
 }
 
@@ -1171,9 +1191,18 @@ void glColor3ubv( const GLubyte *v )
 void glColor4ubv( const GLubyte *v )
 {
 	//*((unsigned int*)(&currentVertexAttrib.red)) = *((unsigned int*)(v));
-	currentVertexAttrib.red   = v[0];
-	currentVertexAttrib.green = v[1];
-	currentVertexAttrib.blue  = v[2];
+	if( nanoglState.stupidglesbug )
+	{
+		currentVertexAttrib.red   = (unsigned char)ClampTo255( v[0] * v[3] / 255.0f );
+		currentVertexAttrib.green = (unsigned char)ClampTo255( v[1] * v[3] / 255.0f );
+		currentVertexAttrib.blue  = (unsigned char)ClampTo255( v[2] * v[3] / 255.0f );
+	}
+	else
+	{
+		currentVertexAttrib.red   = v[0];
+		currentVertexAttrib.green = v[1];
+		currentVertexAttrib.blue  = v[2];
+	}
 	currentVertexAttrib.alpha = v[3];
 }
 
@@ -1189,9 +1218,18 @@ void glColor3fv( const GLfloat *v )
 
 void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha )
 {
-	currentVertexAttrib.red   = red;
-	currentVertexAttrib.green = green;
-	currentVertexAttrib.blue  = blue;
+	if( nanoglState.stupidglesbug )
+	{
+		currentVertexAttrib.red   = (unsigned char)ClampTo255( red   * alpha / 255.0f );
+		currentVertexAttrib.green = (unsigned char)ClampTo255( green * alpha / 255.0f );
+		currentVertexAttrib.blue  = (unsigned char)ClampTo255( blue  * alpha / 255.0f );
+	}
+	else
+	{
+		currentVertexAttrib.red   = red;
+		currentVertexAttrib.green = green;
+		currentVertexAttrib.blue  = blue;
+	}
 	currentVertexAttrib.alpha = alpha;
 }
 
@@ -1270,6 +1308,15 @@ void glBlendFunc( GLenum sfactor, GLenum dfactor )
 	{
 		return;
 	}
+	
+	if( sfactor == GL_SRC_ALPHA && dfactor == GL_ONE ) 
+	{
+		sfactor = GL_ONE; // workaround gles bug
+		nanoglState.stupidglesbug = GL_TRUE;
+	}
+	else
+		nanoglState.stupidglesbug = GL_FALSE;
+	
 	nanoglState.sfactor = sfactor;
 	nanoglState.dfactor = dfactor;
 	FlushOnStateChange( );
