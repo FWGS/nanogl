@@ -25,14 +25,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 extern "C" {
 #endif
 
-int nanoGL_Init(void);
-void nanoGL_Destroy(void);
-void nanoGL_Flush();
-void *nanoGL_GetProcAddress(const char *);
-void nanoGL_Reset();
+int nanoGL_Init( void );
+void nanoGL_Destroy( void );
+void nanoGL_Flush( );
+void *nanoGL_GetProcAddress( const char * );
+void nanoGL_Reset( );
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif
