@@ -32,17 +32,27 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DEBUG_NANO 0
 
 #ifdef __ANDROID__
-#include <android/log.h>
+
+	#include <android/log.h>
+
 #define LOG __android_log_print
 
 #define LOGI( ... ) __android_log_print( ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__ )
-#define LOGD( ... )   \
-	if ( DEBUG_NANO ) \
-	__android_log_print( ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
 #define LOGE( ... ) __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
 #define LOGW( ... ) __android_log_print( ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__ )
-#else
-#ifndef _MSC_VER
+#define LOGD( ... ) if ( DEBUG_NANO ) __android_log_print( ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
+
+#elif defined( TIZEN )
+#include <dlog.h>
+
+#define LOGI( ... ) dlog_print( DLOG_INFO, LOG_TAG, __VA_ARGS__ )
+#define LOGE( ... ) dlog_print( DLOG_ERROR, LOG_TAG, __VA_ARGS__ )
+#define LOGW( ... ) dlog_print( DLOG_WARN, LOG_TAG, __VA_ARGS__ )
+#define LOGD( ... ) if( DEBUG_NANO ) dlog_print( DLOG_DEBUG, LOG_TAG, __VA_ARGS__ )
+
+
+#elif !defined(_MSC_VER)
+
 #define LOGI( ... )             \
 	printf( "I: "__VA_ARGS__ ); \
 	printf( "\n" )
@@ -59,12 +69,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	printf( "W: "__VA_ARGS__ ); \
 	printf( "\n" )
 #else
+
 #define LOGI printf
 #define LOGD printf
 #define LOGE printf
 #define LOGW printf
 
-#endif
 #endif
 
 #ifdef _WIN32
@@ -72,20 +82,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define dlopen( x, y ) LoadLibraryA( x )
 #define dlsym( x, y ) ( void * ) GetProcAddress( (HINSTANCE)x, y )
 #define dlclose( x ) FreeLibrary( (HINSTANCE)x )
+#define GLLIB1 "opengl32.dll"
+#define GLLIB2 "opengl32.dll"
+#define GLLIB3 "opengl32.dll"
 #else
 #include <dlfcn.h>
+#define GLLIB1 "libGLESv1_CM.so"
+#define GLLIB2 "libGLESv2.so"
+#define GLLIB3 "libEGL.so"
 #endif
 
 //#define GL_ENTRY(_r, _api, ...) #_api,
 
-static char const *const gl_names[] = {
-#include "funcnames.h"
-    NULL};
+static char const *const gl_names[] = 
+{
+	#include "funcnames.h"
+	NULL
+};
 
 //const char * driver;
-
 static void *glesLib = NULL;
-
 GlESInterface *glEsImpl = NULL;
 
 extern void InitGLStructs( );
@@ -205,12 +221,11 @@ static int loadDriver( const char *name )
 /**
  * Init
  */
-#ifdef _WIN32
 int nanoGL_Init( )
 {
-	const char *lib1 = "opengl32.dll"; // Has both gl* & egl* funcs SDK < 1.5
-	const char *lib2 = "opengl32.dll"; // Only gl* funcs SDK >= 1.5
-	const char *lib3 = "opengl32.dll"; // Only egl* funcs SDK >= 1.5
+	const char *lib1 = GLLIB1; // Has both gl* & egl* funcs SDK < 1.5
+	const char *lib2 = GLLIB2; // Only gl* funcs SDK >= 1.5
+	const char *lib3 = GLLIB3; // Only egl* funcs SDK >= 1.5
 	const char *driver;
 
 	// load lib
@@ -246,7 +261,6 @@ int nanoGL_Init( )
 	//}
 
 	// Load API gl* for 1.5+  else egl* gl*
-	//if (CreateGlEsInterface(driver, glesLib, eglLib, NULL) == -1)
 	if ( !CreateGlEsInterface( driver, glesLib, eglLib, (void *)gl_unimplemented ) == -1 )
 	{
 		// release lib
@@ -255,62 +269,7 @@ int nanoGL_Init( )
 		dlclose( glesLib );
 		return 0;
 	}
-
-	// Init nanoGL
-	InitGLStructs( );
-	return 1;
-}
-#else
-int nanoGL_Init( )
-{
-	const char *lib1 = "libGLESv1_CM.so"; // Has both gl* & egl* funcs SDK < 1.5
-	const char *lib2 = "libGLESv2.so";    // Only gl* funcs SDK >= 1.5
-	const char *lib3 = "libEGL.so";       // Only egl* funcs SDK >= 1.5
-	const char *driver;
-
-	// load lib
-	LOGI( "nanoGL: Init loading driver %s\n", lib1 );
-	//LOG (ANDROID_LOG_DEBUG, LOG_TAG, "nanoGL: Init loading driver %s\n", lib1);
-
-	if ( !loadDriver( lib1 ) )
-	{
-		LOGE( "Failed to load driver %s. Trying %s\n", lib1, lib2 );
-
-		if ( !loadDriver( lib2 ) )
-		{
-			LOGE( "Failed to load  %s.\n", lib2 );
-			return 0;
-		}
-		else
-			driver = lib2;
-	}
-	else
-		driver = lib1;
-
-	void *eglLib;
-
-	//if ( strcmp(driver, lib2) == 0 ) {
-	LOGD( "**** Will Load EGL subs from %s ****", lib3 );
-
-	eglLib = dlopen( lib3, RTLD_NOW | RTLD_LOCAL );
-
-	if ( !eglLib )
-	{
-		LOGE( "Failed to load %s", lib3 );
-	}
-	//}
-
-	// Load API gl* for 1.5+  else egl* gl*
-	//if (CreateGlEsInterface(driver, glesLib, eglLib, NULL) == -1)
-	if ( !CreateGlEsInterface( driver, glesLib, eglLib, (void *)gl_unimplemented ) == -1 )
-	{
-		// release lib
-		LOGE( "CreateGlEsInterface failed." );
-
-		dlclose( glesLib );
-		return 0;
-	}
-
+	
 #ifdef __ANDROID__
 	// somewhy it does not initialize correctly
 	*( (void **)&glEsImpl->glGenFramebuffers ) = (void *)glEsImpl->eglGetProcAddress( "glGenFramebuffersOES" );
@@ -328,7 +287,7 @@ int nanoGL_Init( )
 	InitGLStructs( );
 	return 1;
 }
-#endif
+
 void nanoGL_Destroy( )
 {
 	LOGD( "nanoGL_Destroy" );

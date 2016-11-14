@@ -28,6 +28,10 @@ set( NANOGL_LIBRARY nanogl )
 file( GLOB NANOGL_SOURCES *.cpp )
 include_directories( GL/ )
 
+if( TIZEN )
+	include_directories( ${CMAKE_SYSROOT}/usr/include/dlog )
+endif()
+
 add_library( ${NANOGL_LIBRARY} STATIC ${NANOGL_SOURCES} )
 
 set_target_properties (${NANOGL_LIBRARY} PROPERTIES
