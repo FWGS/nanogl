@@ -44,7 +44,14 @@ struct nanoState
 	GLboolean depth_test;
 	GLboolean dither;
 	GLboolean fog;
-	GLboolean lighti;
+	GLboolean light0;
+	GLboolean light1;
+	GLboolean light2;
+	GLboolean light3;
+	GLboolean light4;
+	GLboolean light5;
+	GLboolean light6;
+	GLboolean light7;
 	GLboolean lighting;
 	GLboolean line_smooth;
 	GLboolean matrix_palette_oes;
@@ -82,6 +89,13 @@ static struct nanoState nanoglInitState =
         GL_FALSE,
         GL_FALSE,
         GL_TRUE,
+        GL_FALSE,
+        GL_FALSE,
+        GL_FALSE,
+        GL_FALSE,
+        GL_FALSE,
+        GL_FALSE,
+        GL_FALSE,
         GL_FALSE,
         GL_FALSE,
         GL_FALSE,
@@ -485,7 +499,7 @@ void glEnd( void )
 		*ptrIndexArray++ = indexCount++;
 		*ptrIndexArray++ = indexCount++;
 		*ptrIndexArray++ = indexCount++;
-		int vcount = ( ( vertexCount - vertexMark ) - 3 );
+		int vcount       = ( ( vertexCount - vertexMark ) - 3 );
 		for ( int count = 0; count < vcount; count++ )
 		{
 			*ptrIndexArray++ = indexbase;
@@ -574,15 +588,86 @@ void glEnable( GLenum cap )
 		break;
 	}
 	case GL_FOG:
-		//case GL_LIGHTi
+	{
+		if ( !nanoglState.fog )
 		{
-			if ( !nanoglState.fog )
-			{
-				nanoglState.fog = GL_TRUE;
-				statechanged    = GL_TRUE;
-			}
-			break;
+			nanoglState.fog = GL_TRUE;
+			statechanged    = GL_TRUE;
 		}
+		break;
+	}
+	case GL_LIGHT0:
+	{
+		if ( !nanoglState.light0 )
+		{
+			nanoglState.light0 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT1:
+	{
+		if ( !nanoglState.light1 )
+		{
+			nanoglState.light1 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT2:
+	{
+		if ( !nanoglState.light2 )
+		{
+			nanoglState.light2 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT3:
+	{
+		if ( !nanoglState.light3 )
+		{
+			nanoglState.light3 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT4:
+	{
+		if ( !nanoglState.light4 )
+		{
+			nanoglState.light4 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT5:
+	{
+		if ( !nanoglState.light5 )
+		{
+			nanoglState.light5 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT6:
+	{
+		if ( !nanoglState.light6 )
+		{
+			nanoglState.light6 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT7:
+	{
+		if ( !nanoglState.light7 )
+		{
+			nanoglState.light7 = GL_TRUE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
 	case GL_LIGHTING:
 	{
 		if ( !nanoglState.lighting )
@@ -793,15 +878,86 @@ void glDisable( GLenum cap )
 		break;
 	}
 	case GL_FOG:
-		//case GL_LIGHTi
+	{
+		if ( nanoglState.fog )
 		{
-			if ( nanoglState.fog )
-			{
-				nanoglState.fog = GL_FALSE;
-				statechanged    = GL_TRUE;
-			}
-			break;
+			nanoglState.fog = GL_FALSE;
+			statechanged    = GL_TRUE;
 		}
+		break;
+	}
+	case GL_LIGHT0:
+	{
+		if ( !nanoglState.light0 )
+		{
+			nanoglState.light0 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT1:
+	{
+		if ( !nanoglState.light1 )
+		{
+			nanoglState.light1 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT2:
+	{
+		if ( !nanoglState.light2 )
+		{
+			nanoglState.light2 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT3:
+	{
+		if ( !nanoglState.light3 )
+		{
+			nanoglState.light3 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT4:
+	{
+		if ( !nanoglState.light4 )
+		{
+			nanoglState.light4 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT5:
+	{
+		if ( !nanoglState.light5 )
+		{
+			nanoglState.light5 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT6:
+	{
+		if ( !nanoglState.light6 )
+		{
+			nanoglState.light6 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
+	case GL_LIGHT7:
+	{
+		if ( !nanoglState.light7 )
+		{
+			nanoglState.light7 = GL_FALSE;
+			statechanged       = GL_TRUE;
+		}
+		break;
+	}
 	case GL_LIGHTING:
 	{
 		if ( nanoglState.lighting )
@@ -1006,6 +1162,50 @@ void glOrtho( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat 
 #endif
 }
 
+// Rikku2000: Light
+void glLightf( GLenum light, GLenum pname, GLfloat param )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glLightf( light, pname, param );
+}
+void glLightfv( GLenum light, GLenum pname, const GLfloat *params )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glLightfv( light, pname, params );
+}
+void glLightModelf( GLenum pname, GLfloat param )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glLightModelf( pname, param );
+}
+void glLightModelfv( GLenum pname, const GLfloat *params )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glLightModelfv( pname, params );
+}
+void glMaterialf( GLenum face, GLenum pname, GLfloat param )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glMaterialf( face, pname, param );
+}
+void glMaterialfv( GLenum face, GLenum pname, const GLfloat *params )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glMaterialfv( face, pname, params );
+}
+void glColorMaterial( GLenum face, GLenum mode )
+{
+	FlushOnStateChange( );
+
+	glEsImpl->glColorMaterial( face, mode );
+}
+
 void glMatrixMode( GLenum mode )
 {
 	if ( nanoglState.matrixmode == mode )
@@ -1144,7 +1344,7 @@ void glVertex3f( GLfloat x, GLfloat y, GLfloat z )
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	*vert++       = x;
 	*vert++       = y;
-	*vert++ = z;
+	*vert++       = z;
 #if defined( __MULTITEXTURE_SUPPORT__ )
 	memcpy( vert, &currentVertexAttrib.red, 5 * sizeof( GLfloat ) );
 #else

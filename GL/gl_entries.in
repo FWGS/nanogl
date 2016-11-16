@@ -186,6 +186,9 @@ GL_ENTRY( void, glOrtho, double left, double right, double bottom, double top, d
 GL_ENTRY( void, glDepthRange, double zNear, double zFar )
 #endif
 
+// Rikku2000: Light
+GL_ENTRY( void, glColorMaterial, GLenum face, GLenum mode )
+
 // fbo
 GL_ENTRY( void, glGenFramebuffersOES, GLsizei n, GLuint *framebuffers )
 GL_ENTRY( void, glGenRenderbuffersOES, GLsizei n, GLuint *renderbuffers )

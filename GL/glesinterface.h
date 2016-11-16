@@ -229,6 +229,10 @@ struct GlESInterface
 	void( APIENTRY *glOrtho )( double left, double right, double bottom, double top, double zNear, double zFar ) S;
 	void( APIENTRY *glDepthRange )( double zNear, double zFar ) S;
 #endif
+
+	// Rikku2000: Light
+	void( APIENTRY *glColorMaterial )( unsigned int face, unsigned int mode ) S;
+
 	void( APIENTRY *glGenFramebuffers )( unsigned int n, unsigned int *framebuffers ) S;
 	void( APIENTRY *glGenRenderbuffers )( unsigned int n, unsigned int *renderbuffers ) S;
 	void( APIENTRY *glRenderbufferStorage )( unsigned int target, unsigned int internalformat, unsigned int width, unsigned int height ) S;

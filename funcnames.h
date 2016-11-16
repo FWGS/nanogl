@@ -184,3 +184,6 @@
     "glOrtho",
     "glDepthRange",
 #endif
+
+// Rikku2000: Light
+	"glColorMaterial",

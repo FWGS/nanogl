@@ -665,6 +665,15 @@ void glTexParameterx( GLenum target, GLenum pname, GLfixed param );
 void glGenTextures( GLsizei n, GLuint *textures );
 void glFrontFace( GLenum mode );
 
+// Rikku2000: Light
+void glLightf( GLenum light, GLenum pname, GLfloat param );
+void glLightfv( GLenum light, GLenum pname, const GLfloat *params );
+void glLightModelf( GLenum pname, GLfloat param );
+void glLightModelfv( GLenum pname, const GLfloat *params );
+void glMaterialf( GLenum face, GLenum pname, GLfloat param );
+void glMaterialfv( GLenum face, GLenum pname, const GLfloat *params );
+void glColorMaterial( GLenum face, GLenum mode );
+
 //nicknekit: for xash3d
 
 void glColor3ub( GLubyte red, GLubyte green, GLubyte blue );
