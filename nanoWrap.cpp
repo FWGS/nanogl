@@ -166,7 +166,7 @@ static struct nanotmuState tmuInitState =
 
 static struct nanotmuState *activetmuState = &tmuState0;
 
-extern "C++" GlESInterface *glEsImpl;
+extern GlESInterface *glEsImpl;
 
 static GLenum wrapperPrimitiveMode = GL_QUADS;
 GLboolean useTexCoordArray         = GL_FALSE;
@@ -2099,7 +2099,7 @@ void glDrawArrays( GLenum mode, GLint first, GLsizei count )
 {
     glEsImpl->glNormalPointer( type, stride, ptr );
 }*/
-
+/*
 void glCopyTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height )
 {
 	FlushOnStateChange( );
@@ -2157,4 +2157,4 @@ void glRenderbufferStorage( GLenum target, GLenum internalformat, GLsizei width,
 {
 	FlushOnStateChange( );
 	glEsImpl->glRenderbufferStorage( target, internalformat, width, height );
-}
+}*/

@@ -86,6 +86,7 @@ static char const *const gl_names[] = {
 
 static void *glesLib = NULL;
 
+extern "C++" GlESInterface *glEsImpl;
 GlESInterface *glEsImpl = NULL;
 
 extern void InitGLStructs( );
@@ -134,7 +135,7 @@ static int CreateGlEsInterface( const char *name, void *lib, void *lib1, void *d
 	{
 		void *f;
 
-		f = dlsym( lib, *api ); // try libGLESxx_CM.so
+        f = SDL_GL_GetProcAddress(*api);//dlsym( lib, *api ); // try libGLESxx_CM.so
 
 #ifdef USE_CORE_PROFILE
 		// Hack: try ARB and EXT suffix
@@ -151,7 +152,7 @@ static int CreateGlEsInterface( const char *name, void *lib, void *lib1, void *d
 			f = dlsym( lib, namearb );
 		}
 #endif
-		if ( f == NULL )
+		/*if ( f == NULL )
 		{
 			LOGW( "<%s> not found in %s. Trying libEGL.so.", *api, name ); //driver);
 
@@ -182,7 +183,7 @@ static int CreateGlEsInterface( const char *name, void *lib, void *lib1, void *d
 					f = (void *)default_func;
 			}
 		}
-		else
+		else*/
 		{
 			LOGD( "<%s> @ 0x%p\n", *api, f );
 		}
@@ -266,13 +267,13 @@ int nanoGL_Init( )
 	const char *lib1 = "libGLESv1_CM.so"; // Has both gl* & egl* funcs SDK < 1.5
 	const char *lib2 = "libGLESv2.so";    // Only gl* funcs SDK >= 1.5
 	const char *lib3 = "libEGL.so";       // Only egl* funcs SDK >= 1.5
-	const char *driver;
+	const char *driver = NULL;
 
 	// load lib
 	LOGI( "nanoGL: Init loading driver %s\n", lib1 );
 	//LOG (ANDROID_LOG_DEBUG, LOG_TAG, "nanoGL: Init loading driver %s\n", lib1);
 
-	if ( !loadDriver( lib1 ) )
+	/*if ( !loadDriver( lib1 ) )
 	{
 		LOGE( "Failed to load driver %s. Trying %s\n", lib1, lib2 );
 
@@ -285,7 +286,7 @@ int nanoGL_Init( )
 			driver = lib2;
 	}
 	else
-		driver = lib1;
+		driver = lib1;*/
 
 	void *eglLib;
 
@@ -302,7 +303,7 @@ int nanoGL_Init( )
 
 	// Load API gl* for 1.5+  else egl* gl*
 	//if (CreateGlEsInterface(driver, glesLib, eglLib, NULL) == -1)
-	if ( !CreateGlEsInterface( driver, glesLib, eglLib, (void *)gl_unimplemented ) == -1 )
+	if ( !CreateGlEsInterface( driver, 0, 0, (void *)gl_unimplemented ) == -1 )
 	{
 		// release lib
 		LOGE( "CreateGlEsInterface failed." );
