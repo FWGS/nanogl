@@ -232,6 +232,8 @@ static GLushort *ptrIndexArray = NULL;
 
 static GLboolean arraysValid = GL_FALSE;
 
+static GLboolean skipnanogl;
+
 void InitGLStructs( )
 {
 	ptrVertexAttribArray     = vertexattribs;
@@ -317,7 +319,8 @@ void ResetNanoState( )
 
 	glEsImpl->glMatrixMode( nanoglState.matrixmode );
 
-	glEsImpl->glColor4f( currentVertexAttrib.red, currentVertexAttrib.green, currentVertexAttrib.blue, currentVertexAttrib.alpha );
+	glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+		 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 
 	glEsImpl->glBlendFunc( nanoglState.sfactor, nanoglState.dfactor );
 
@@ -326,10 +329,13 @@ void ResetNanoState( )
 	glEsImpl->glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, activetmuState->texture_env_mode.value );
 
 	arraysValid = GL_FALSE;
+	skipnanogl = GL_FALSE;
 }
 
 void FlushOnStateChange( )
 {
+	if( skipnanogl )
+		return;
 	if ( delayedttmuchange )
 	{
 		delayedttmuchange = GL_FALSE;
@@ -508,6 +514,11 @@ void glEnd( void )
 
 void glEnable( GLenum cap )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glEnable( cap );
+		return;
+	}
 	GLboolean statechanged = GL_FALSE;
 	switch ( cap )
 	{
@@ -696,11 +707,11 @@ void glEnable( GLenum cap )
 	case GL_STENCIL_TEST:
 	{
 		return;
-		/*            if (!nanoglState.stencil_test)
+		if (!nanoglState.stencil_test)
                 {
                 nanoglState.stencil_test = GL_TRUE;
                 statechanged = GL_TRUE;
-                }*/
+                }
 		break;
 	}
 	case GL_TEXTURE_2D:
@@ -714,6 +725,17 @@ void glEnable( GLenum cap )
 		}
 		break;
 	}
+#if 0 // todo: implement cubemap texgen
+	case GL_TEXTURE_GEN_S:
+	case GL_TEXTURE_GEN_T:
+	case GL_TEXTURE_GEN_R:
+	case GL_TEXTURE_GEN_Q:
+	{
+		FlushOnStateChange( );
+		nanoglState.texgen = true;
+		return;
+	}
+#endif
 	default:
 		break;
 	}
@@ -727,6 +749,11 @@ void glEnable( GLenum cap )
 
 void glDisable( GLenum cap )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glDisable( cap );
+		return;
+	}
 	GLboolean statechanged = GL_FALSE;
 	switch ( cap )
 	{
@@ -915,11 +942,11 @@ void glDisable( GLenum cap )
 	case GL_STENCIL_TEST:
 	{
 		return;
-		/*            if (nanoglState.stencil_test)
+		if (nanoglState.stencil_test)
                 {
                 nanoglState.stencil_test = GL_FALSE;
                 statechanged = GL_TRUE;
-                }*/
+                }
 		break;
 	}
 	case GL_TEXTURE_2D:
@@ -933,6 +960,17 @@ void glDisable( GLenum cap )
 		}
 		break;
 	}
+#if 0
+	case GL_TEXTURE_GEN_S:
+	case GL_TEXTURE_GEN_T:
+	case GL_TEXTURE_GEN_R:
+	case GL_TEXTURE_GEN_Q:
+	{
+		FlushOnStateChange( );
+		nanoglState.texgen = false;
+		return;
+	}
+#endif
 	default:
 		break;
 	}
@@ -1178,6 +1216,9 @@ void glColor4fv( const GLfloat *v )
 		currentVertexAttrib.blue  = (unsigned char)ClampTo255( v[2] * 255.0f );
 	}
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( v[3] * 255.0f );
+	if( skipnanogl )
+		glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
 void glColor3ubv( const GLubyte *v )
@@ -1186,6 +1227,9 @@ void glColor3ubv( const GLubyte *v )
 	currentVertexAttrib.green = v[1];
 	currentVertexAttrib.blue  = v[2];
 	currentVertexAttrib.alpha = 255;
+	if( skipnanogl )
+		glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
 void glColor4ubv( const GLubyte *v )
@@ -1204,6 +1248,9 @@ void glColor4ubv( const GLubyte *v )
 		currentVertexAttrib.blue  = v[2];
 	}
 	currentVertexAttrib.alpha = v[3];
+	if( skipnanogl )
+		glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
 void glColor3fv( const GLfloat *v )
@@ -1212,6 +1259,9 @@ void glColor3fv( const GLfloat *v )
 	currentVertexAttrib.green = (unsigned char)ClampTo255( v[1] * 255.0f );
 	currentVertexAttrib.blue  = (unsigned char)ClampTo255( v[2] * 255.0f );
 	currentVertexAttrib.alpha = 255;
+	if( skipnanogl )
+		glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
 //-- nicknekit: xash3d funcs --
@@ -1231,6 +1281,9 @@ void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha )
 		currentVertexAttrib.blue  = blue;
 	}
 	currentVertexAttrib.alpha = alpha;
+	if( skipnanogl )
+		glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
 void glColor3ub( GLubyte red, GLubyte green, GLubyte blue )
@@ -1239,6 +1292,9 @@ void glColor3ub( GLubyte red, GLubyte green, GLubyte blue )
 	currentVertexAttrib.green = green;
 	currentVertexAttrib.blue  = blue;
 	currentVertexAttrib.alpha = 255;
+	if( skipnanogl )
+		glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
 void glNormal3fv( const GLfloat *v )
@@ -1284,14 +1340,18 @@ GLboolean glIsTexture( GLuint texture )
 	return glEsImpl->glIsTexture( texture );
 }
 
+// TODO: add native normal/reflection map texgen support
+
 void glTexGeni( GLenum coord, GLenum pname, GLint param )
 {
-	//for mirrors? not needed for original hl?
+	FlushOnStateChange();
+	//glEsImpl->glTexGeniOES( coord, pname, param );
 }
 
 void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params )
 {
-	//for mirrors? not needed for original hl?
+	FlushOnStateChange();
+	//glEsImpl->glTexGenfvOES( coord, pname, params );
 }
 
 //-- --//
@@ -1304,6 +1364,11 @@ void glHint( GLenum target, GLenum mode )
 
 void glBlendFunc( GLenum sfactor, GLenum dfactor )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glBlendFunc( sfactor, dfactor );
+		return;
+	}
 	if ( ( nanoglState.sfactor == sfactor ) && ( nanoglState.dfactor == dfactor ) )
 	{
 		return;
@@ -1348,6 +1413,11 @@ void glPushMatrix( void )
 
 void glTexEnvf( GLenum target, GLenum pname, GLfloat param )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glTexEnvf( target, pname, param );
+		return;
+	}
 	if ( target == GL_TEXTURE_ENV )
 	{
 		if ( pname == GL_TEXTURE_ENV_MODE )
@@ -1382,17 +1452,25 @@ void glVertex3fv( const GLfloat *v )
 
 void glDepthMask( GLboolean flag )
 {
+	if( !skipnanogl )
+	{
 	if ( nanoglState.depthmask == flag )
 	{
 		return;
 	}
 	nanoglState.depthmask = flag;
 	FlushOnStateChange( );
+	}
 	glEsImpl->glDepthMask( flag );
 }
 
 void glBindTexture( GLenum target, GLuint texture )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glBindTexture( target,texture );
+		return;
+	}
 	if ( activetmuState->boundtexture.value == texture )
 	{
 		return;
@@ -1478,6 +1556,11 @@ GLenum glGetError( void )
 
 void glActiveTexture( GLenum texture )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glActiveTexture( texture );
+		return;
+	}
 	if ( activetmu == texture )
 	{
 		return;
@@ -1504,6 +1587,11 @@ void glActiveTexture( GLenum texture )
 
 void glClientActiveTexture( GLenum texture )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glClientActiveTexture( texture );
+		return;
+	}
 	clientactivetmu = texture;
 }
 
@@ -1571,6 +1659,11 @@ struct ptrstate texture_coord_array;
 
 void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indices )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glDrawElements( mode, count, type, indices );
+		return;
+	}
 	// ensure that all primitives specified between glBegin/glEnd pairs
 	// are rendered first, and that we have correct tmu in use..
 	FlushOnStateChange( );
@@ -1668,8 +1761,17 @@ void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indi
 	glEsImpl->glDrawElements( mode, count, type, indices );
 }
 
+bool vboarray;
+
 void glEnableClientState( GLenum array )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glEnableClientState( array );
+		if( array == GL_VERTEX_ARRAY )
+			vboarray = true;
+		return;
+	}
 	struct nanotmuState *clientstate = NULL;
 	if ( clientactivetmu == GL_TEXTURE0 )
 	{
@@ -1725,6 +1827,13 @@ void glEnableClientState( GLenum array )
 }
 void glDisableClientState( GLenum array )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glDisableClientState( array );
+		if( array == GL_VERTEX_ARRAY )
+			vboarray = false;
+		return;
+	}
 	struct nanotmuState *clientstate = NULL;
 	if ( clientactivetmu == GL_TEXTURE0 )
 	{
@@ -1780,6 +1889,12 @@ void glDisableClientState( GLenum array )
 }
 void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
+
+	if( skipnanogl )
+	{
+		glEsImpl->glVertexPointer( size, type, stride, pointer );
+		return;
+	}
 	if ( tmuState0.vertex_array.size == size &&
 	     tmuState0.vertex_array.stride == stride &&
 	     tmuState0.vertex_array.type == type &&
@@ -1795,6 +1910,11 @@ void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *poi
 }
 void glTexCoordPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glTexCoordPointer( size, type, stride, pointer );
+		return;
+	}
 	struct nanotmuState *clientstate = NULL;
 	if ( clientactivetmu == GL_TEXTURE0 )
 	{
@@ -1964,6 +2084,11 @@ void glFrontFace( GLenum mode )
 
 void glTexEnvi( GLenum target, GLenum pname, GLint param )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glTexEnvi( target, pname, param );
+		return;
+	}
 	if ( target == GL_TEXTURE_ENV )
 	{
 		if ( pname == GL_TEXTURE_ENV_MODE )
@@ -1991,12 +2116,18 @@ void glMultiTexCoord3fARB( GLenum a, GLfloat b, GLfloat c, GLfloat )
 	return glMultiTexCoord2fARB( a, b, c );
 }
 
-void glMultiTexCoord2f( GLenum, GLfloat, GLfloat )
+void glMultiTexCoord2f( GLenum a, GLfloat b, GLfloat c )
 {
+	glMultiTexCoord2fARB(a,b,c);
 }
 #endif
 void glDrawArrays( GLenum mode, GLint first, GLsizei count )
 {
+	if( skipnanogl )
+	{
+		glEsImpl->glDrawArrays( mode, first, count );
+		return;
+	}
 	// ensure that all primitives specified between glBegin/glEnd pairs
 	// are rendered first, and that we have correct tmu in use..
 	if ( mode == GL_QUADS )
@@ -2157,4 +2288,43 @@ void glRenderbufferStorage( GLenum target, GLenum internalformat, GLsizei width,
 {
 	FlushOnStateChange( );
 	glEsImpl->glRenderbufferStorage( target, internalformat, width, height );
+}
+
+void glBindBufferARB( GLuint target, GLuint index )
+{
+	static int sindex;
+
+	if( index && !sindex && !skipnanogl )
+		FlushOnStateChange();
+	glEsImpl->glDisableClientState( GL_COLOR_ARRAY );
+	glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+		 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
+
+	skipnanogl = (!!index) || vboarray;
+	glEsImpl->glBindBuffer( target, index );
+	if( sindex && !index )
+	{
+		arraysValid = GL_FALSE;
+	}
+	sindex = index;
+}
+
+void glGenBuffersARB( GLuint count, GLuint *indexes )
+{
+	glEsImpl->glGenBuffers( count, indexes );
+}
+
+void glDeleteBuffersARB( GLuint count, GLuint *indexes )
+{
+	glEsImpl->glDeleteBuffers( count, indexes );
+}
+
+void glBufferDataARB( GLuint target, GLuint size, void *buffer, GLuint type )
+{
+	glEsImpl->glBufferData( target, size, buffer, type );
+}
+
+void glBufferSubDataARB( GLuint target, GLsizei offset, GLsizei size, void *buffer )
+{
+	glEsImpl->glBufferSubData( target, offset, size, buffer );
 }

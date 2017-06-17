@@ -238,6 +238,8 @@ struct GlESInterface
 	void( APIENTRY *glDeleteRenderbuffers )( unsigned int n, const unsigned int *renderbuffers ) S;
 	void( APIENTRY *glDeleteFramebuffers )( unsigned int n, const unsigned int *framebuffers ) S;
 	void( APIENTRY *glFramebufferRenderbuffer )( unsigned int target, unsigned int attachment, unsigned int renderbuffertarget, unsigned int renderbuffer ) S;
+	void( APIENTRY *glTexGenfvOES )(unsigned int coord, unsigned int pname, const float *params);
+	void( APIENTRY *glTexGeniOES )(unsigned int coord, unsigned int pname, int param);
 };
 #if !defined( __WINS__ )
 #if defined( __TARGET_FPU_VFP )

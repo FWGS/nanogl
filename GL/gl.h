@@ -572,6 +572,8 @@ typedef int GLclampx;
 #define glVertex3d glVertex3f
 //#define glColor4ub(x,y,z,p) glColor4f(x,y,z,p) //nicknekit: wtf???
 #define glFogi glFogf
+#define glActiveTextureARB glActiveTexture
+#define glClientActiveTextureARB glClientActiveTexture
 //
 
 void glBegin( GLenum mode );
@@ -714,6 +716,17 @@ void glMultiTexCoord3fARB( GLenum, GLfloat, GLfloat, GLfloat );
 void glMultiTexCoord2f( GLenum, GLfloat, GLfloat );
 
 void glDrawArrays( GLenum mode, GLint first, GLsizei count );
+
+
+void glBindBufferARB( GLuint target, GLuint index );
+
+void glGenBuffersARB( GLuint count, GLuint *indexes );
+
+void glDeleteBuffersARB( GLuint count, GLuint *indexes );
+
+void glBufferDataARB( GLuint target, GLuint size, void *buffer, GLuint type );
+
+void glBufferSubDataARB( GLuint target, GLsizei offset, GLsizei size, void *buffer );
 
 #ifdef __cplusplus
 }
