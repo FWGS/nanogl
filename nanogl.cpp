@@ -322,6 +322,10 @@ int nanoGL_Init( )
 	*( (void **)&glEsImpl->glDeleteRenderbuffers ) = (void *)glEsImpl->eglGetProcAddress( "glDeleteRenderbuffersOES" );
 	*( (void **)&glEsImpl->glDeleteFramebuffers ) = (void *)glEsImpl->eglGetProcAddress( "glDeleteFramebuffersOES" );
 	*( (void **)&glEsImpl->glFramebufferRenderbuffer ) = (void *)glEsImpl->eglGetProcAddress( "glFramebufferRenderbufferOES" );
+	*( (void **)&glEsImpl->glTexGeniOES ) = (void *)glEsImpl->eglGetProcAddress( "glTexGeniOES" );
+	*( (void **)&glEsImpl->glTexGenfvOES ) = (void *)glEsImpl->eglGetProcAddress( "glTexGenfv" );
+
+
 #endif
 
 	// Init nanoGL
