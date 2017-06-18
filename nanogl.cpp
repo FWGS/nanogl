@@ -69,11 +69,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef _WIN32
 #include <windows.h>
-#define dlopen( x, y ) LoadLibraryA( x )
-#define dlsym( x, y ) ( void * ) GetProcAddress( (HINSTANCE)x, y )
-#define dlclose( x ) FreeLibrary( (HINSTANCE)x )
+#define loadDriver( x ) LoadLibraryA( x )
+#define procAddress( x, y ) (( void * ) GetProcAddress( (HINSTANCE)x, y ))
+#define freeDriver( x ) FreeLibrary( (HINSTANCE)x )
+#define GL_LIB "opengl32.dll"
+#define GLES_LIB "GLESv1_CM.dll"
+#define EGL_LIB "EGL.dll"
 #else
 #include <dlfcn.h>
+#define loadDriver( x ) dlopen( x, RTLD_NOW | RTLD_LOCAL )
+#define procAddress( x, y ) dlsym( x, y )
+#define freeDriver( x ) dlclose() x )
+#define GL_LIB "libGL.so.1"
+#define GLES_LIB "libGLESv1_CM.so"
+#define EGL_LIB "libEGL.so"
 #endif
 
 //#define GL_ENTRY(_r, _api, ...) #_api,
@@ -89,28 +98,123 @@ static void *glesLib = NULL;
 GlESInterface *glEsImpl = NULL;
 
 extern void InitGLStructs( );
-
+#ifdef WIN32
 void APIENTRY gl_unimplemented( GLenum none )
 {
 #ifndef USE_CORE_PROFILE
 	LOGE( "Called unimplemented OpenGL ES API\n" );
 #endif
 }
-
+#else // make glGetString not crash
+const char * APIENTRY gl_unimplemented( GLenum none )
+{
+#ifndef USE_CORE_PROFILE
+	LOGE( "Called unimplemented OpenGL ES API\n" );
+#endif
+	return "";
+}
+#endif
 #ifdef XASH_SDL
+#define NANOGL_SDL
+#endif
+#ifdef __ANDROID__
+#define NANOGL_EGL
+#endif
+#ifdef NANOGL_SDL
 #include "SDL.h"
+#endif
+
+#ifdef NANOGL_EGL
+void *eglLib;
 #endif
 
 void *nanoGL_GetProcAddress( const char *name )
 {
 	void *addr = NULL;
-#ifdef XASH_SDL
+#ifdef NANOGL_SDL
 	addr = SDL_GL_GetProcAddress( name );
 	if ( !addr )
 #endif
-		addr = dlsym( glesLib, name );
+#ifdef NANOGL_EGL
+	if( glEsImpl->eglGetProcAddress )
+		addr = (void *)glEsImpl->eglGetProcAddress( name );
+	if( !addr )
+		addr = procAddress( eglLib, name );
+	if( !addr )
+#endif
+		addr = procAddress( glesLib, name );
 	return addr;
 }
+
+#if 1
+int nanoGL_Init( void)
+{
+	// load GL API calls
+	char const *const *api;
+	api = gl_names;
+	int count = 0;
+
+	// alloc space
+	if ( !glEsImpl )
+		glEsImpl = (GlESInterface *)malloc( sizeof( GlESInterface ) );
+
+#ifdef NANOGL_EGL
+	eglLib = loadDriver( EGL_LIB );
+#endif
+#ifdef USE_CORE_PROFILE
+	glesLib = loadDriver( GL_LIB );
+#else
+	glesLib = loadDriver( GLES_LIB );
+#endif
+
+	// nanoGL interface pointer
+	void **ptr = (void **)( glEsImpl );
+
+	while ( *api )
+	{
+		void *f;
+
+		f = nanoGL_GetProcAddress( *api);
+
+	#ifdef USE_CORE_PROFILE
+		// Hack: try ARB and EXT suffix
+		if ( f == NULL )
+		{
+			char namearb[256];
+			snprintf( namearb, 256, "%sARB", *api );
+			f = nanoGL_GetProcAddress( namearb );
+		}
+		if ( f == NULL )
+		{
+			char namearb[256];
+			snprintf( namearb, 256, "%sEXT", *api );
+			f = nanoGL_GetProcAddress( namearb );
+		}
+	#endif
+		if ( f == NULL )
+		{
+			LOGW( "<%s> not found.", *api);
+			f = (void*)gl_unimplemented;
+		}
+		else
+		{
+			LOGD( "<%s> @ 0x%p\n", *api, f );
+			count++;
+		}
+
+		*ptr++ = f;
+		api++;
+	}
+
+	InitGLStructs();
+
+	// it has loaded something, maybe it will work
+	if( count > 10 )
+		return 1;
+	else
+		return 0;
+}
+#else
 
 static int CreateGlEsInterface( const char *name, void *lib, void *lib1, void *default_func )
 {
@@ -332,6 +436,8 @@ int nanoGL_Init( )
 	InitGLStructs( );
 	return 1;
 }
+#endif
+
 #endif
 void nanoGL_Destroy( )
 {

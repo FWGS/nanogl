@@ -187,3 +187,14 @@
 
 // Rikku2000: Light
 	"glColorMaterial",
+
+// fbo
+	"glGenFramebuffersOES",
+	"glGenRenderbuffersOES",
+	"glRenderbufferStorageOES",
+	"glBindFramebufferOES",
+	"glBindRenderbufferOES",
+	"glFramebufferTexture2DOES",
+	"glDeleteRenderbuffersOES",
+	"glDeleteFramebuffersOES",
+	"glFramebufferRenderbufferOES",

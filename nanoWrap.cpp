@@ -180,7 +180,7 @@ static struct nanotmuState tmuInitState =
 
 static struct nanotmuState *activetmuState = &tmuState0;
 
-extern "C++" GlESInterface *glEsImpl;
+extern GlESInterface *glEsImpl;
 
 static GLenum wrapperPrimitiveMode = GL_QUADS;
 GLboolean useTexCoordArray         = GL_FALSE;
