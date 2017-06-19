@@ -135,14 +135,13 @@ void *nanoGL_GetProcAddress( const char *name )
 	addr = SDL_GL_GetProcAddress( name );
 	if ( !addr )
 #endif
+	addr = procAddress( glesLib, name );
 #ifdef NANOGL_EGL
-	if( glEsImpl->eglGetProcAddress )
-		addr = (void *)glEsImpl->eglGetProcAddress( name );
 	if( !addr )
 		addr = procAddress( eglLib, name );
-	if( !addr )
+	if( !addr && glEsImpl->eglGetProcAddress )
+		addr = (void *)glEsImpl->eglGetProcAddress( name );
 #endif
-		addr = procAddress( glesLib, name );
 	return addr;
 }
 
@@ -157,6 +156,7 @@ int nanoGL_Init( void)
 	// alloc space
 	if ( !glEsImpl )
 		glEsImpl = (GlESInterface *)malloc( sizeof( GlESInterface ) );
+	memset( glEsImpl, 0, sizeof( GlESInterface ) );
 
 #ifdef NANOGL_EGL
 	eglLib = loadDriver( EGL_LIB );
