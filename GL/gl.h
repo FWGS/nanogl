@@ -18,7 +18,7 @@ typedef unsigned int GLuint;
 typedef float GLfloat;
 typedef double GLdouble;
 typedef float GLclampf;
-typedef float GLclampd;
+typedef double GLclampd;
 typedef void GLvoid;
 typedef int GLfixed;
 typedef int GLclampx;
@@ -570,10 +570,6 @@ typedef int GLclampx;
 #define glVertex2i( x, y ) glVertex3f( x, y, 0.0 )
 #define glTexCoord2d glTexCoord2f
 #define glVertex3d glVertex3f
-//#define glColor4ub(x,y,z,p) glColor4f(x,y,z,p) //nicknekit: wtf???
-#define glFogi glFogf
-#define glActiveTextureARB glActiveTexture
-#define glClientActiveTextureARB glClientActiveTexture
 //
 
 void glBegin( GLenum mode );
@@ -586,7 +582,7 @@ void glTexCoord2f( GLfloat s, GLfloat t );
 void glViewport( GLint x, GLint y, GLsizei width, GLsizei height );
 void glLoadIdentity( void );
 void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha );
-void glOrtho( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar );
+void glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar );
 void glMatrixMode( GLenum mode );
 void glTexParameterf( GLenum target, GLenum pname, GLfloat param );
 void glTexImage2D( GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels );
@@ -594,13 +590,13 @@ void glDrawBuffer( GLenum mode );
 void glTranslatef( GLfloat x, GLfloat y, GLfloat z );
 void glRotatef( GLfloat angle, GLfloat x, GLfloat y, GLfloat z );
 void glScalef( GLfloat x, GLfloat y, GLfloat z );
-void glDepthRange( GLclampf zNear, GLclampf zFar );
+void glDepthRange(GLclampd zNear, GLclampd zFar );
 void glDepthFunc( GLenum func );
 void glFinish( void );
 void glGetFloatv( GLenum pname, GLfloat *params );
 void glGetIntegerv( GLenum pname, GLint *params );
 void glCullFace( GLenum mode );
-void glFrustum( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar );
+void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar );
 void glClear( GLbitfield mask );
 void glVertex3f( GLfloat x, GLfloat y, GLfloat z );
 void glColor4fv( const GLfloat *v );
@@ -624,6 +620,8 @@ void glClearColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
 GLenum glGetError( void );
 void glActiveTexture( GLenum texture );
 void glClientActiveTexture( GLenum texture );
+void glActiveTextureARB( GLenum texture );
+void glClientActiveTextureARB( GLenum texture );
 void glColor3ubv( const GLubyte *v );
 void glPolygonMode( GLenum face, GLenum mode );
 
@@ -657,6 +655,7 @@ void glPointSize( GLfloat size );
 void glDrawArrays( GLenum mode, int first, int count );
 void glMultMatrixf( const GLfloat *m );
 void glPixelStorei( GLenum pname, GLint param );
+void glFogi( GLenum pname, GLint param );
 void glFogf( GLenum pname, GLfloat param );
 void glFogfv( GLenum pname, const GLfloat *params );
 void glGetTexParameteriv( GLenum target, GLenum pname, GLint *params );

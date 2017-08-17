@@ -67,8 +67,8 @@ struct nanoState
 	GLboolean scissor_test;
 	GLboolean stencil_test;
 	GLboolean depthmask;
-	GLclampf depth_range_near;
-	GLclampf depth_range_far;
+	GLclampd depth_range_near;
+	GLclampd depth_range_far;
 	GLenum depth_func;
 	GLenum cullface;
 	GLenum shademodel;
@@ -1190,7 +1190,7 @@ void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( alpha * 255.0f );
 }
 
-void glOrtho( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar )
+void glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
 {
 	FlushOnStateChange( );
 #ifdef USE_CORE_PROFILE
@@ -1324,7 +1324,7 @@ void glScalef( GLfloat x, GLfloat y, GLfloat z )
 	glEsImpl->glScalef( x, y, z );
 }
 
-void glDepthRange( GLclampf zNear, GLclampf zFar )
+void glDepthRange( GLclampd zNear, GLclampd zFar )
 {
 	if ( ( nanoglState.depth_range_near == zNear ) && ( nanoglState.depth_range_far == zFar ) )
 	{
@@ -1383,7 +1383,7 @@ void glCullFace( GLenum mode )
 	glEsImpl->glCullFace( mode );
 }
 
-void glFrustum( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar )
+void glFrustum( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFrustumf( left, right, bottom, top, zNear, zFar );
@@ -1757,6 +1757,37 @@ void glActiveTexture( GLenum texture )
 	activetmu = texture;
 }
 
+void glActiveTextureARB( GLenum texture )
+{
+	if( skipnanogl )
+	{
+		glEsImpl->glActiveTexture( texture );
+		return;
+	}
+	if ( activetmu == texture )
+	{
+		return;
+	}
+	if ( delayedttmuchange )
+	{
+		delayedttmuchange = GL_FALSE;
+	}
+	else
+	{
+		delayedttmuchange = GL_TRUE;
+		delayedtmutarget  = texture;
+	}
+	if ( texture == GL_TEXTURE0 )
+	{
+		activetmuState = &tmuState0;
+	}
+	else
+	{
+		activetmuState = &tmuState1;
+	}
+	activetmu = texture;
+}
+
 void glClientActiveTexture( GLenum texture )
 {
 	if( skipnanogl )
@@ -1766,6 +1797,16 @@ void glClientActiveTexture( GLenum texture )
 	}
 	clientactivetmu = texture;
 }
+void glClientActiveTextureARB( GLenum texture )
+{
+	if( skipnanogl )
+	{
+		glEsImpl->glClientActiveTexture( texture );
+		return;
+	}
+	clientactivetmu = texture;
+}
+
 
 void glPolygonMode( GLenum face, GLenum mode )
 {
@@ -1777,7 +1818,7 @@ void glDeleteTextures( GLsizei n, const GLuint *textures )
 	glEsImpl->glDeleteTextures( n, textures );
 }
 
-void glClearDepth( GLclampf depth )
+void glClearDepth( GLclampd depth )
 {
 	FlushOnStateChange( );
 	glEsImpl->glClearDepthf( depth );
@@ -2187,6 +2228,12 @@ void glPixelStorei( GLenum pname, GLint param )
 {
 	FlushOnStateChange( );
 	glEsImpl->glPixelStorei( pname, param );
+}
+
+void glFogi( GLenum pname, GLint param )
+{
+	FlushOnStateChange( );
+	glEsImpl->glFogf( pname, param );
 }
 
 void glFogf( GLenum pname, GLfloat param )
