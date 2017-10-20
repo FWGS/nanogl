@@ -1913,6 +1913,9 @@ void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indi
 		else
 		{
 			glEsImpl->glDisableClientState( GL_COLOR_ARRAY );
+			glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+					currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
+
 		}
 		glEsImpl->glColorPointer( tmuState0.color_array.size,
 		                          tmuState0.color_array.type,
@@ -2385,6 +2388,9 @@ void glDrawArrays( GLenum mode, GLint first, GLsizei count )
 		else
 		{
 			glEsImpl->glDisableClientState( GL_COLOR_ARRAY );
+			glEsImpl->glColor4f( currentVertexAttrib.red/255.0f, currentVertexAttrib.green/255.0f,
+					currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
+
 		}
 		glEsImpl->glColorPointer( tmuState0.color_array.size,
 		                          tmuState0.color_array.type,
