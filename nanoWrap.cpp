@@ -789,12 +789,11 @@ void glEnable( GLenum cap )
 	}
 	case GL_STENCIL_TEST:
 	{
-		return;
 		if (!nanoglState.stencil_test)
-                {
-                nanoglState.stencil_test = GL_TRUE;
-                statechanged = GL_TRUE;
-                }
+		{
+			nanoglState.stencil_test = GL_TRUE;
+			statechanged = GL_TRUE;
+		}
 		break;
 	}
 	case GL_TEXTURE_2D:
@@ -1095,12 +1094,11 @@ void glDisable( GLenum cap )
 	}
 	case GL_STENCIL_TEST:
 	{
-		return;
 		if (nanoglState.stencil_test)
-                {
-                nanoglState.stencil_test = GL_FALSE;
-                statechanged = GL_TRUE;
-                }
+		{
+			nanoglState.stencil_test = GL_FALSE;
+			statechanged = GL_TRUE;
+		}
 		break;
 	}
 	case GL_TEXTURE_2D:
@@ -1858,12 +1856,18 @@ void glCallList( GLuint list )
 }
 void glColorMask( GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha )
 {
+	FlushOnStateChange( );
+	glEsImpl->glColorMask( red, green, blue, alpha );	
 }
 void glStencilFunc( GLenum func, GLint ref, GLuint mask )
 {
+	FlushOnStateChange( );
+	glEsImpl->glStencilFunc( func, ref, mask );	
 }
 void glStencilOp( GLenum fail, GLenum zfail, GLenum zpass )
 {
+	FlushOnStateChange( );
+	glEsImpl->glStencilOp( fail, zfail, zpass );
 }
 
 struct ptrstate vertex_array;
@@ -2192,9 +2196,13 @@ void glPolygonOffset( GLfloat factor, GLfloat units )
 }
 void glStencilMask( GLuint mask )
 {
+	FlushOnStateChange( );
+	glEsImpl->glStencilMask( mask );
 }
 void glClearStencil( GLint s )
 {
+	FlushOnStateChange( );
+	glEsImpl->glClearStencil( s );
 }
 
 #if defined( __MULTITEXTURE_SUPPORT__ )
