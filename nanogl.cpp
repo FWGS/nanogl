@@ -44,19 +44,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #else
 #ifndef _MSC_VER
 #define LOGI( ... )             \
-	printf( "I: "__VA_ARGS__ ); \
+	printf( "I: " __VA_ARGS__ ); \
 	printf( "\n" )
 #define LOGD( ... )                 \
 	if ( DEBUG_NANO )               \
 	{                               \
-		printf( "D: "__VA_ARGS__ ); \
+		printf( "D: " __VA_ARGS__ ); \
 		printf( "\n" );             \
 	}
 #define LOGE( ... )             \
-	printf( "E: "__VA_ARGS__ ); \
+	printf( "E: " __VA_ARGS__ ); \
 	printf( "\n" )
 #define LOGW( ... )             \
-	printf( "W: "__VA_ARGS__ ); \
+	printf( "W: " __VA_ARGS__ ); \
 	printf( "\n" )
 #else
 #define LOGI printf
