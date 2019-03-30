@@ -736,6 +736,8 @@ void glBufferDataARB( GLuint target, GLuint size, void *buffer, GLuint type );
 
 void glBufferSubDataARB( GLuint target, GLsizei offset, GLsizei size, void *buffer );
 
+GLboolean glIsEnabled( GLenum cap );
+
 #ifdef __cplusplus
 }
 #endif

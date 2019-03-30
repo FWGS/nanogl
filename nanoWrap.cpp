@@ -2561,3 +2561,8 @@ void glBufferSubDataARB( GLuint target, GLsizei offset, GLsizei size, void *buff
 {
 	glEsImpl->glBufferSubData( target, offset, size, buffer );
 }
+
+GLboolean glIsEnabled( GLenum cap )
+{
+	return glEsImpl->glIsEnabled( cap );
+}
