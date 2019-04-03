@@ -1279,7 +1279,13 @@ void glTexImage2D( GLenum target, GLint level, GLint internalformat, GLsizei wid
 {
 	unsigned char *data = (unsigned char*)pixels;
 
-	if( pixels && (internalformat == GL_RGB || internalformat == GL_RGB8 || internalformat == GL_RGB5) && (format == GL_RGBA) ) // strip alpha from texture
+	if( pixels && format == GL_RGBA && (
+		internalformat == GL_RGB ||
+		internalformat == GL_RGB8 ||
+		internalformat == GL_RGB5 ||
+		internalformat == GL_LUMINANCE ||
+		internalformat == GL_LUMINANCE8 ||
+		internalformat == GL_LUMINANCE4 )) // strip alpha from texture
 	{
 		unsigned char *in = data, *out;
 		int i = 0, size = width * height * 4;
