@@ -199,3 +199,9 @@ GL_ENTRY( void, glFramebufferTexture2DOES, GLenum target, GLenum attachment, GLe
 GL_ENTRY( void, glDeleteRenderbuffersOES, GLsizei n, const GLuint *renderbuffers )
 GL_ENTRY( void, glDeleteFramebuffersOES, GLsizei n, const GLuint *framebuffers )
 GL_ENTRY( void, glFramebufferRenderbufferOES, GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer )
+
+GL_ENTRY( void, glDebugMessageControlKHR, unsigned int source, unsigned int type, unsigned int severity, int count, const unsigned int* ids, unsigned char enabled )
+GL_ENTRY( void, glDebugMessageInsertKHR, unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* buf );
+GL_ENTRY( void, glDebugMessageCallbackKHR, GL_DEBUG_PROC_KHR callback, void* userParam );
+GL_ENTRY( unsigned int, glGetDebugMessageLogKHR, unsigned int count, int bufsize, unsigned int* sources, unsigned int* types, unsigned int* ids, unsigned int* severities, int* lengths, char* messageLog );
+

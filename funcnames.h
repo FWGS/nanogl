@@ -198,3 +198,9 @@
 	"glDeleteRenderbuffersOES",
 	"glDeleteFramebuffersOES",
 	"glFramebufferRenderbufferOES",
+
+// GL_KHR_debug
+	"glDebugMessageControlKHR",
+	"glDebugMessageInsertKHR",
+	"glDebugMessageCallbackKHR",
+	"glGetDebugMessageLogKHR",

@@ -397,7 +397,7 @@ void nanoGL_Reset( )
 {
 	ResetNanoState( );
 }
-void glBegin( GLenum mode )
+void GL_MANGLE(glBegin)( GLenum mode )
 {
 	wrapperPrimitiveMode     = mode;
 	vertexMark               = vertexCount;
@@ -405,7 +405,7 @@ void glBegin( GLenum mode )
 	indexbase                = indexCount;
 }
 
-void glEnd( void )
+void GL_MANGLE(glEnd)( void )
 {
 	vertexCount += ( (unsigned char *)ptrVertexAttribArray - (unsigned char *)ptrVertexAttribArrayMark ) / sizeof( VertexAttrib );
 	if ( vertexCount < 3 )
@@ -524,7 +524,7 @@ void glEnd( void )
 		FlushOnStateChange( );
 }
 
-void glEnable( GLenum cap )
+void GL_MANGLE(glEnable)( GLenum cap )
 {
 	if( skipnanogl )
 	{
@@ -829,7 +829,7 @@ void glEnable( GLenum cap )
 	}
 }
 
-void glDisable( GLenum cap )
+void GL_MANGLE(glDisable)( GLenum cap )
 {
 	if( skipnanogl )
 	{
@@ -1134,9 +1134,9 @@ void glDisable( GLenum cap )
 	}
 }
 
-void glVertex2f( GLfloat x, GLfloat y )
+void GL_MANGLE(glVertex2f)( GLfloat x, GLfloat y )
 {
-	glVertex3f( x, y, 0.0f );
+	GL_MANGLE(glVertex3f)( x, y, 0.0f );
 }
 
 __FORCEINLINE unsigned int ClampTo255( float value )
@@ -1149,7 +1149,7 @@ __FORCEINLINE unsigned int ClampTo255( float value )
 	return retval;
 }
 
-void glColor3f( GLfloat red, GLfloat green, GLfloat blue )
+void GL_MANGLE(glColor3f)( GLfloat red, GLfloat green, GLfloat blue )
 {
 	currentVertexAttrib.red   = (unsigned char)ClampTo255( red * 255.0f );
 	currentVertexAttrib.green = (unsigned char)ClampTo255( green * 255.0f );
@@ -1157,30 +1157,30 @@ void glColor3f( GLfloat red, GLfloat green, GLfloat blue )
 	currentVertexAttrib.alpha = 255;
 }
 
-void glTexCoord2fv( const GLfloat *v )
+void GL_MANGLE(glTexCoord2fv)( const GLfloat *v )
 {
 	memcpy( &currentVertexAttrib.s, v, 2 * sizeof( float ) );
 }
 
-void glTexCoord2f( GLfloat s, GLfloat t )
+void GL_MANGLE(glTexCoord2f)( GLfloat s, GLfloat t )
 {
 	currentVertexAttrib.s = s;
 	currentVertexAttrib.t = t;
 }
 
-void glViewport( GLint x, GLint y, GLsizei width, GLsizei height )
+void GL_MANGLE(glViewport)( GLint x, GLint y, GLsizei width, GLsizei height )
 {
 	FlushOnStateChange( );
 	glEsImpl->glViewport( x, y, width, height );
 }
 
-void glLoadIdentity( void )
+void GL_MANGLE(glLoadIdentity)( void )
 {
 	FlushOnStateChange( );
 	glEsImpl->glLoadIdentity( );
 }
 
-void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
+void GL_MANGLE(glColor4f)( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
 {
 	currentVertexAttrib.red   = (unsigned char)ClampTo255( red * 255.0f );
 	currentVertexAttrib.green = (unsigned char)ClampTo255( green * 255.0f );
@@ -1188,7 +1188,7 @@ void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( alpha * 255.0f );
 }
 
-void glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
+void GL_MANGLE(glOrtho)( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
 {
 	FlushOnStateChange( );
 #ifdef USE_CORE_PROFILE
@@ -1199,50 +1199,50 @@ void glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdo
 }
 
 // Rikku2000: Light
-void glLightf( GLenum light, GLenum pname, GLfloat param )
+void GL_MANGLE(glLightf)( GLenum light, GLenum pname, GLfloat param )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glLightf( light, pname, param );
 }
-void glLightfv( GLenum light, GLenum pname, const GLfloat *params )
+void GL_MANGLE(glLightfv)( GLenum light, GLenum pname, const GLfloat *params )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glLightfv( light, pname, params );
 }
-void glLightModelf( GLenum pname, GLfloat param )
+void GL_MANGLE(glLightModelf)( GLenum pname, GLfloat param )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glLightModelf( pname, param );
 }
-void glLightModelfv( GLenum pname, const GLfloat *params )
+void GL_MANGLE(glLightModelfv)( GLenum pname, const GLfloat *params )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glLightModelfv( pname, params );
 }
-void glMaterialf( GLenum face, GLenum pname, GLfloat param )
+void GL_MANGLE(glMaterialf)( GLenum face, GLenum pname, GLfloat param )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glMaterialf( face, pname, param );
 }
-void glMaterialfv( GLenum face, GLenum pname, const GLfloat *params )
+void GL_MANGLE(glMaterialfv)( GLenum face, GLenum pname, const GLfloat *params )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glMaterialfv( face, pname, params );
 }
-void glColorMaterial( GLenum face, GLenum mode )
+void GL_MANGLE(glColorMaterial)( GLenum face, GLenum mode )
 {
 	FlushOnStateChange( );
 
 	glEsImpl->glColorMaterial( face, mode );
 }
 
-void glMatrixMode( GLenum mode )
+void GL_MANGLE(glMatrixMode)( GLenum mode )
 {
 	if ( nanoglState.matrixmode == mode )
 	{
@@ -1253,7 +1253,7 @@ void glMatrixMode( GLenum mode )
 	glEsImpl->glMatrixMode( mode );
 }
 
-void glTexParameterf( GLenum target, GLenum pname, GLfloat param )
+void GL_MANGLE(glTexParameterf)( GLenum target, GLenum pname, GLfloat param )
 {
 	if ( pname == GL_TEXTURE_BORDER_COLOR )
 	{
@@ -1270,12 +1270,12 @@ void glTexParameterf( GLenum target, GLenum pname, GLfloat param )
 	glEsImpl->glTexParameterf( target, pname, param );
 }
 
-void glTexParameterfv( GLenum target, GLenum pname, const GLfloat *params )
+void GL_MANGLE(glTexParameterfv)( GLenum target, GLenum pname, const GLfloat *params )
 {
-	glTexParameterf( target, pname, params[0] );
+	GL_MANGLE(glTexParameterf)( target, pname, params[0] );
 }
 
-void glTexImage2D( GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
+void GL_MANGLE(glTexImage2D)( GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
 {
 	unsigned char *data = (unsigned char*)pixels;
 
@@ -1306,29 +1306,29 @@ void glTexImage2D( GLenum target, GLint level, GLint internalformat, GLsizei wid
 		free(data);
 }
 
-void glDrawBuffer( GLenum /*mode*/ )
+void GL_MANGLE(glDrawBuffer)( GLenum /*mode*/ )
 {
 }
 
-void glTranslatef( GLfloat x, GLfloat y, GLfloat z )
+void GL_MANGLE(glTranslatef)( GLfloat x, GLfloat y, GLfloat z )
 {
 	FlushOnStateChange( );
 	glEsImpl->glTranslatef( x, y, z );
 }
 
-void glRotatef( GLfloat angle, GLfloat x, GLfloat y, GLfloat z )
+void GL_MANGLE(glRotatef)( GLfloat angle, GLfloat x, GLfloat y, GLfloat z )
 {
 	FlushOnStateChange( );
 	glEsImpl->glRotatef( angle, x, y, z );
 }
 
-void glScalef( GLfloat x, GLfloat y, GLfloat z )
+void GL_MANGLE(glScalef)( GLfloat x, GLfloat y, GLfloat z )
 {
 	FlushOnStateChange( );
 	glEsImpl->glScalef( x, y, z );
 }
 
-void glDepthRange( GLclampd zNear, GLclampd zFar )
+void GL_MANGLE(glDepthRange)( GLclampd zNear, GLclampd zFar )
 {
 	if ( ( nanoglState.depth_range_near == zNear ) && ( nanoglState.depth_range_far == zFar ) )
 	{
@@ -1347,7 +1347,7 @@ void glDepthRange( GLclampd zNear, GLclampd zFar )
 #endif
 }
 
-void glDepthFunc( GLenum func )
+void GL_MANGLE(glDepthFunc)( GLenum func )
 {
 	if ( nanoglState.depth_func == func )
 	{
@@ -1361,19 +1361,19 @@ void glDepthFunc( GLenum func )
 	glEsImpl->glDepthFunc( func );
 }
 
-void glFinish( void )
+void GL_MANGLE(glFinish)( void )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFinish( );
 }
 
-void glGetFloatv( GLenum pname, GLfloat *params )
+void GL_MANGLE(glGetFloatv)( GLenum pname, GLfloat *params )
 {
 	FlushOnStateChange( );
 	glEsImpl->glGetFloatv( pname, params );
 }
 
-void glCullFace( GLenum mode )
+void GL_MANGLE(glCullFace)( GLenum mode )
 {
 	if ( nanoglState.cullface == mode )
 	{
@@ -1387,19 +1387,19 @@ void glCullFace( GLenum mode )
 	glEsImpl->glCullFace( mode );
 }
 
-void glFrustum( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
+void GL_MANGLE(glFrustum)( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFrustumf( left, right, bottom, top, zNear, zFar );
 }
 
-void glClear( GLbitfield mask )
+void GL_MANGLE(glClear)( GLbitfield mask )
 {
 	FlushOnStateChange( );
 	glEsImpl->glClear( mask );
 }
 
-void glVertex3f( GLfloat x, GLfloat y, GLfloat z )
+void GL_MANGLE(glVertex3f)( GLfloat x, GLfloat y, GLfloat z )
 {
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	*vert++       = x;
@@ -1412,7 +1412,7 @@ void glVertex3f( GLfloat x, GLfloat y, GLfloat z )
 #endif
 }
 
-void glColor4fv( const GLfloat *v )
+void GL_MANGLE(glColor4fv)( const GLfloat *v )
 {
 	currentVertexAttrib.red   = (unsigned char)ClampTo255( v[0] * 255.0f );
 	currentVertexAttrib.green = (unsigned char)ClampTo255( v[1] * 255.0f );
@@ -1423,7 +1423,7 @@ void glColor4fv( const GLfloat *v )
 			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
-void glColor3ubv( const GLubyte *v )
+void GL_MANGLE(glColor3ubv)( const GLubyte *v )
 {
 	currentVertexAttrib.red   = v[0];
 	currentVertexAttrib.green = v[1];
@@ -1434,7 +1434,7 @@ void glColor3ubv( const GLubyte *v )
 			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
-void glColor4ubv( const GLubyte *v )
+void GL_MANGLE(glColor4ubv)( const GLubyte *v )
 {
 	//*((unsigned int*)(&currentVertexAttrib.red)) = *((unsigned int*)(v));
 	currentVertexAttrib.red   = v[0];
@@ -1446,7 +1446,7 @@ void glColor4ubv( const GLubyte *v )
 			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
-void glColor3fv( const GLfloat *v )
+void GL_MANGLE(glColor3fv)( const GLfloat *v )
 {
 	currentVertexAttrib.red   = (unsigned char)ClampTo255( v[0] * 255.0f );
 	currentVertexAttrib.green = (unsigned char)ClampTo255( v[1] * 255.0f );
@@ -1459,7 +1459,7 @@ void glColor3fv( const GLfloat *v )
 
 //-- nicknekit: xash3d funcs --
 
-void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha )
+void GL_MANGLE(glColor4ub)( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha )
 {
 	currentVertexAttrib.red   = red;
 	currentVertexAttrib.green = green;
@@ -1470,7 +1470,7 @@ void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha )
 			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
-void glColor3ub( GLubyte red, GLubyte green, GLubyte blue )
+void GL_MANGLE(glColor3ub)( GLubyte red, GLubyte green, GLubyte blue )
 {
 	currentVertexAttrib.red   = red;
 	currentVertexAttrib.green = green;
@@ -1481,44 +1481,44 @@ void glColor3ub( GLubyte red, GLubyte green, GLubyte blue )
 			 currentVertexAttrib.blue/255.0f, currentVertexAttrib.alpha/255.0f );
 }
 
-void glNormal3fv( const GLfloat *v )
+void GL_MANGLE(glNormal3fv)( const GLfloat *v )
 {
 	FlushOnStateChange( );
 	glEsImpl->glNormal3f( v[0], v[1], v[2] );
 }
 
-void glCopyTexImage2D( GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border )
+void GL_MANGLE(glCopyTexImage2D)( GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border )
 {
 	FlushOnStateChange( );
 	glEsImpl->glCopyTexImage2D( target, level, internalformat, x, y, width, height, border );
 }
 
-void glTexImage1D( GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
+void GL_MANGLE(glTexImage1D)( GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	glTexImage2D( GL_TEXTURE_2D, level, internalformat, width, 1, border, format, type, pixels );
+	GL_MANGLE(glTexImage2D)( GL_TEXTURE_2D, level, internalformat, width, 1, border, format, type, pixels );
 }
 
-void glTexImage3D( GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
+void GL_MANGLE(glTexImage3D)( GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	glTexImage2D( GL_TEXTURE_2D, level, internalformat, width, height, border, format, type, pixels );
+	GL_MANGLE(glTexImage2D)( GL_TEXTURE_2D, level, internalformat, width, height, border, format, type, pixels );
 }
 
-void glTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels )
+void GL_MANGLE(glTexSubImage1D)( GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	glTexSubImage2D( target, level, xoffset, 0, width, 1, format, type, pixels );
+	GL_MANGLE(glTexSubImage2D)( target, level, xoffset, 0, width, 1, format, type, pixels );
 }
 
-void glTexSubImage3D( GLenum target, GLint level,
+void GL_MANGLE(glTexSubImage3D)( GLenum target, GLint level,
                       GLint xoffset, GLint yoffset,
                       GLint zoffset, GLsizei width,
                       GLsizei height, GLsizei depth,
                       GLenum format,
                       GLenum type, const GLvoid *pixels )
 {
-	glTexSubImage2D( target, level, xoffset, yoffset, width, height, format, type, pixels );
+	GL_MANGLE(glTexSubImage2D)( target, level, xoffset, yoffset, width, height, format, type, pixels );
 }
 
-GLboolean glIsTexture( GLuint texture )
+GLboolean GL_MANGLE(glIsTexture)( GLuint texture )
 {
 	FlushOnStateChange( );
 	return glEsImpl->glIsTexture( texture );
@@ -1526,13 +1526,13 @@ GLboolean glIsTexture( GLuint texture )
 
 // TODO: add native normal/reflection map texgen support
 
-void glTexGeni( GLenum coord, GLenum pname, GLint param )
+void GL_MANGLE(glTexGeni)( GLenum coord, GLenum pname, GLint param )
 {
 	FlushOnStateChange();
 	//glEsImpl->glTexGeniOES( coord, pname, param );
 }
 
-void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params )
+void GL_MANGLE(glTexGenfv)( GLenum coord, GLenum pname, const GLfloat *params )
 {
 	FlushOnStateChange();
 	//glEsImpl->glTexGenfvOES( coord, pname, params );
@@ -1540,13 +1540,13 @@ void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params )
 
 //-- --//
 
-void glHint( GLenum target, GLenum mode )
+void GL_MANGLE(glHint)( GLenum target, GLenum mode )
 {
 	FlushOnStateChange( );
 	glEsImpl->glHint( target, mode );
 }
 
-void glBlendFunc( GLenum sfactor, GLenum dfactor )
+void GL_MANGLE(glBlendFunc)( GLenum sfactor, GLenum dfactor )
 {
 	if( skipnanogl )
 	{
@@ -1564,13 +1564,13 @@ void glBlendFunc( GLenum sfactor, GLenum dfactor )
 	glEsImpl->glBlendFunc( sfactor, dfactor );
 }
 
-void glPopMatrix( void )
+void GL_MANGLE(glPopMatrix)( void )
 {
 	FlushOnStateChange( );
 	glEsImpl->glPopMatrix( );
 }
 
-void glShadeModel( GLenum mode )
+void GL_MANGLE(glShadeModel)( GLenum mode )
 {
 	if ( nanoglState.shademodel == mode )
 	{
@@ -1581,13 +1581,13 @@ void glShadeModel( GLenum mode )
 	glEsImpl->glShadeModel( mode );
 }
 
-void glPushMatrix( void )
+void GL_MANGLE(glPushMatrix)( void )
 {
 	FlushOnStateChange( );
 	glEsImpl->glPushMatrix( );
 }
 
-void glTexEnvf( GLenum target, GLenum pname, GLfloat param )
+void GL_MANGLE(glTexEnvf)( GLenum target, GLenum pname, GLfloat param )
 {
 	if( skipnanogl )
 	{
@@ -1615,7 +1615,7 @@ void glTexEnvf( GLenum target, GLenum pname, GLfloat param )
 	glEsImpl->glTexEnvf( target, pname, param );
 }
 
-void glVertex3fv( const GLfloat *v )
+void GL_MANGLE(glVertex3fv)( const GLfloat *v )
 {
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	memcpy( vert, v, 3 * sizeof( GLfloat ) );
@@ -1626,7 +1626,7 @@ void glVertex3fv( const GLfloat *v )
 #endif
 }
 
-void glDepthMask( GLboolean flag )
+void GL_MANGLE(glDepthMask)( GLboolean flag )
 {
 	if( !skipnanogl )
 	{
@@ -1640,7 +1640,7 @@ void glDepthMask( GLboolean flag )
 	glEsImpl->glDepthMask( flag );
 }
 
-void glBindTexture( GLenum target, GLuint texture )
+void GL_MANGLE(glBindTexture)( GLenum target, GLuint texture )
 {
 	if( skipnanogl )
 	{
@@ -1656,14 +1656,14 @@ void glBindTexture( GLenum target, GLuint texture )
 	glEsImpl->glBindTexture( target, texture );
 }
 
-void glGetIntegerv( GLenum pname, GLint *params )
+void GL_MANGLE(glGetIntegerv)( GLenum pname, GLint *params )
 {
 	FlushOnStateChange( );
 	glEsImpl->glGetIntegerv( pname, params );
 }
 
 GLubyte nano_extensions_string[4096];
-const GLubyte *glGetString( GLenum name )
+const GLubyte *GL_MANGLE(glGetString)( GLenum name )
 {
 
 	if ( name == GL_EXTENSIONS )
@@ -1678,19 +1678,19 @@ const GLubyte *glGetString( GLenum name )
 	return glEsImpl->glGetString( name );
 }
 
-void glAlphaFunc( GLenum func, GLclampf ref )
+void GL_MANGLE(glAlphaFunc)( GLenum func, GLclampf ref )
 {
 	FlushOnStateChange( );
 	glEsImpl->glAlphaFunc( func, ref );
 }
 
-void glFlush( void )
+void GL_MANGLE(glFlush)( void )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFlush( );
 }
 
-void glReadPixels( GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels )
+void GL_MANGLE(glReadPixels)( GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels )
 {
 	if ( format == GL_DEPTH_COMPONENT )
 	{
@@ -1702,35 +1702,35 @@ void glReadPixels( GLint x, GLint y, GLsizei width, GLsizei height, GLenum forma
 	glEsImpl->glReadPixels( x, y, width, height, format, type, pixels );
 }
 
-void glReadBuffer( GLenum /*mode*/ )
+void GL_MANGLE(glReadBuffer)( GLenum /*mode*/ )
 {
 }
 
-void glLoadMatrixf( const GLfloat *m )
+void GL_MANGLE(glLoadMatrixf)( const GLfloat *m )
 {
 	FlushOnStateChange( );
 	glEsImpl->glLoadMatrixf( m );
 }
 
-void glTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels )
+void GL_MANGLE(glTexSubImage2D)( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels )
 {
 	FlushOnStateChange( );
 	glEsImpl->glTexSubImage2D( target, level, xoffset, yoffset, width, height, format, type, pixels );
 }
 
-void glClearColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
+void GL_MANGLE(glClearColor)( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
 {
 	FlushOnStateChange( );
 	glEsImpl->glClearColor( red, green, blue, alpha );
 }
 
-GLenum glGetError( void )
+GLenum GL_MANGLE(glGetError)( void )
 {
 	//FlushOnStateChange();
 	return GL_NO_ERROR; //glEsImpl->glGetError();
 }
 
-void glActiveTexture( GLenum texture )
+void GL_MANGLE(glActiveTexture)( GLenum texture )
 {
 	if( skipnanogl )
 	{
@@ -1761,7 +1761,7 @@ void glActiveTexture( GLenum texture )
 	activetmu = texture;
 }
 
-void glActiveTextureARB( GLenum texture )
+void GL_MANGLE(glActiveTextureARB)( GLenum texture )
 {
 	if( skipnanogl )
 	{
@@ -1792,7 +1792,7 @@ void glActiveTextureARB( GLenum texture )
 	activetmu = texture;
 }
 
-void glClientActiveTexture( GLenum texture )
+void GL_MANGLE(glClientActiveTexture)( GLenum texture )
 {
 	if( skipnanogl )
 	{
@@ -1801,7 +1801,7 @@ void glClientActiveTexture( GLenum texture )
 	}
 	clientactivetmu = texture;
 }
-void glClientActiveTextureARB( GLenum texture )
+void GL_MANGLE(glClientActiveTextureARB)( GLenum texture )
 {
 	if( skipnanogl )
 	{
@@ -1812,23 +1812,23 @@ void glClientActiveTextureARB( GLenum texture )
 }
 
 
-void glPolygonMode( GLenum face, GLenum mode )
+void GL_MANGLE(glPolygonMode)( GLenum face, GLenum mode )
 {
 }
 
-void glDeleteTextures( GLsizei n, const GLuint *textures )
+void GL_MANGLE(glDeleteTextures)( GLsizei n, const GLuint *textures )
 {
 	FlushOnStateChange( );
 	glEsImpl->glDeleteTextures( n, textures );
 }
 
-void glClearDepth( GLclampd depth )
+void GL_MANGLE(glClearDepth)( GLclampd depth )
 {
 	FlushOnStateChange( );
 	glEsImpl->glClearDepthf( depth );
 }
 
-void glClipPlane( GLenum plane, const GLdouble *equation )
+void GL_MANGLE(glClipPlane)( GLenum plane, const GLdouble *equation )
 {
 	FlushOnStateChange( );
 	float array[4];
@@ -1839,38 +1839,38 @@ void glClipPlane( GLenum plane, const GLdouble *equation )
 	glEsImpl->glClipPlanef( plane, array );
 }
 
-void glScissor( GLint x, GLint y, GLsizei width, GLsizei height )
+void GL_MANGLE(glScissor)( GLint x, GLint y, GLsizei width, GLsizei height )
 {
 	FlushOnStateChange( );
 	glEsImpl->glScissor( x, y, width, height );
 }
 
-void glPointSize( GLfloat size )
+void GL_MANGLE(glPointSize)( GLfloat size )
 {
 	FlushOnStateChange( );
 	glEsImpl->glPointSize( size );
 }
 
-void glArrayElement( GLint i )
+void GL_MANGLE(glArrayElement)( GLint i )
 {
 }
-void glLineWidth( GLfloat width )
+void GL_MANGLE(glLineWidth)( GLfloat width )
 {
 }
-void glCallList( GLuint list )
+void GL_MANGLE(glCallList)( GLuint list )
 {
 }
-void glColorMask( GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha )
+void GL_MANGLE(glColorMask)( GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha )
 {
 	FlushOnStateChange( );
 	glEsImpl->glColorMask( red, green, blue, alpha );	
 }
-void glStencilFunc( GLenum func, GLint ref, GLuint mask )
+void GL_MANGLE(glStencilFunc)( GLenum func, GLint ref, GLuint mask )
 {
 	FlushOnStateChange( );
 	glEsImpl->glStencilFunc( func, ref, mask );	
 }
-void glStencilOp( GLenum fail, GLenum zfail, GLenum zpass )
+void GL_MANGLE(glStencilOp)( GLenum fail, GLenum zfail, GLenum zpass )
 {
 	FlushOnStateChange( );
 	glEsImpl->glStencilOp( fail, zfail, zpass );
@@ -1880,7 +1880,7 @@ struct ptrstate vertex_array;
 struct ptrstate color_array;
 struct ptrstate texture_coord_array;
 
-void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indices )
+void GL_MANGLE(glDrawElements)( GLenum mode, GLsizei count, GLenum type, const GLvoid *indices )
 {
 	if( skipnanogl )
 	{
@@ -1989,7 +1989,7 @@ void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indi
 
 bool vboarray;
 
-void glEnableClientState( GLenum array )
+void GL_MANGLE(glEnableClientState)( GLenum array )
 {
 	if( skipnanogl )
 	{
@@ -2051,7 +2051,7 @@ void glEnableClientState( GLenum array )
 		break;
 	}
 }
-void glDisableClientState( GLenum array )
+void GL_MANGLE(glDisableClientState)( GLenum array )
 {
 	if( skipnanogl )
 	{
@@ -2113,7 +2113,7 @@ void glDisableClientState( GLenum array )
 		break;
 	}
 }
-void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
+void GL_MANGLE(glVertexPointer)( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
 
 	if( skipnanogl )
@@ -2134,7 +2134,7 @@ void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *poi
 	tmuState0.vertex_array.ptr     = (GLvoid *)pointer;
 	tmuState0.vertex_array.changed = GL_TRUE;
 }
-void glTexCoordPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
+void GL_MANGLE(glTexCoordPointer)( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
 	if( skipnanogl )
 	{
@@ -2163,7 +2163,7 @@ void glTexCoordPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *p
 	clientstate->texture_coord_array.ptr     = (GLvoid *)pointer;
 	clientstate->texture_coord_array.changed = GL_TRUE;
 }
-void glColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
+void GL_MANGLE(glColorPointer)( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
 	if ( tmuState0.color_array.size == size &&
 	     tmuState0.color_array.stride == stride &&
@@ -2179,7 +2179,7 @@ void glColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *poin
 	tmuState0.color_array.changed = GL_TRUE;
 }
 
-void glNormalPointer( GLenum type, GLsizei stride, const GLvoid *pointer )
+void GL_MANGLE(glNormalPointer)( GLenum type, GLsizei stride, const GLvoid *pointer )
 {
 	int size = 0;
 	if ( tmuState0.normal_array.size == size &&
@@ -2195,17 +2195,17 @@ void glNormalPointer( GLenum type, GLsizei stride, const GLvoid *pointer )
 	tmuState0.normal_array.ptr     = (GLvoid *)pointer;
 	tmuState0.normal_array.changed = GL_TRUE;
 }
-void glPolygonOffset( GLfloat factor, GLfloat units )
+void GL_MANGLE(glPolygonOffset)( GLfloat factor, GLfloat units )
 {
 	FlushOnStateChange( );
 	glEsImpl->glPolygonOffset( factor, units );
 }
-void glStencilMask( GLuint mask )
+void GL_MANGLE(glStencilMask)( GLuint mask )
 {
 	FlushOnStateChange( );
 	glEsImpl->glStencilMask( mask );
 }
-void glClearStencil( GLint s )
+void GL_MANGLE(glClearStencil)( GLint s )
 {
 	FlushOnStateChange( );
 	glEsImpl->glClearStencil( s );
@@ -2213,13 +2213,13 @@ void glClearStencil( GLint s )
 
 #if defined( __MULTITEXTURE_SUPPORT__ )
 
-extern "C" void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
+extern "C" void GL_MANGLE(glMultiTexCoord2fARB)( GLenum target, GLfloat s, GLfloat t );
 
-void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t )
+void GL_MANGLE(glMultiTexCoord2fARB)( GLenum target, GLfloat s, GLfloat t )
 {
 	if ( target == GL_TEXTURE0 )
 	{
-		glTexCoord2f( s, t );
+		GL_MANGLE(glTexCoord2f)( s, t );
 	}
 	else
 	{
@@ -2227,52 +2227,63 @@ void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t )
 		currentVertexAttrib.t_multi = t;
 	}
 }
+
+void GL_MANGLE(glMultiTexCoord3fARB)( GLenum a, GLfloat b, GLfloat c, GLfloat )
+{
+	return GL_MANGLE(glMultiTexCoord2fARB)( a, b, c );
+}
+
+void GL_MANGLE(glMultiTexCoord2f)( GLenum a, GLfloat b, GLfloat c )
+{
+	GL_MANGLE(glMultiTexCoord2fARB)(a,b,c);
+}
+
 #endif
 
 /* Vladimir  */
-/*void glDrawArrays( GLenum mode, int first, int count)
+/*void GL_MANGLE(glDrawArrays)( GLenum mode, int first, int count)
 {
     FlushOnStateChange();
     glEsImpl->glDrawArrays(mode, first , count);
 }*/
-void glMultMatrixf( const GLfloat *m )
+void GL_MANGLE(glMultMatrixf)( const GLfloat *m )
 {
 	FlushOnStateChange( );
 	glEsImpl->glMultMatrixf( m );
 }
 
-void glPixelStorei( GLenum pname, GLint param )
+void GL_MANGLE(glPixelStorei)( GLenum pname, GLint param )
 {
 	FlushOnStateChange( );
 	glEsImpl->glPixelStorei( pname, param );
 }
 
-void glFogi( GLenum pname, GLint param )
+void GL_MANGLE(glFogi)( GLenum pname, GLint param )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFogf( pname, param );
 }
 
-void glFogf( GLenum pname, GLfloat param )
+void GL_MANGLE(glFogf)( GLenum pname, GLfloat param )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFogf( pname, param );
 }
 
-void glFogfv( GLenum pname, const GLfloat *params )
+void GL_MANGLE(glFogfv)( GLenum pname, const GLfloat *params )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFogfv( pname, params );
 }
 
-void glGetTexParameteriv( GLenum target, GLenum pname, GLint *params )
+void GL_MANGLE(glGetTexParameteriv)( GLenum target, GLenum pname, GLint *params )
 {
 	FlushOnStateChange( );
 	glEsImpl->glGetTexParameteriv( target, pname, params );
 }
 
 // This gives: called unimplemented OpenGL ES API (Android)
-void glTexParameteri( GLenum target, GLenum pname, GLint param )
+void GL_MANGLE(glTexParameteri)( GLenum target, GLenum pname, GLint param )
 {
 	if ( pname == GL_TEXTURE_BORDER_COLOR )
 	{
@@ -2289,7 +2300,7 @@ void glTexParameteri( GLenum target, GLenum pname, GLint param )
 	glEsImpl->glTexParameteri( target, pname, param );
 }
 
-void glTexParameterx( GLenum target, GLenum pname, GLfixed param )
+void GL_MANGLE(glTexParameterx)( GLenum target, GLenum pname, GLfixed param )
 {
 	if ( pname == GL_TEXTURE_BORDER_COLOR )
 	{
@@ -2305,20 +2316,20 @@ void glTexParameterx( GLenum target, GLenum pname, GLfixed param )
 	glEsImpl->glTexParameterx( target, pname, param );
 }
 
-void glGenTextures( GLsizei n, GLuint *textures )
+void GL_MANGLE(glGenTextures)( GLsizei n, GLuint *textures )
 {
 	FlushOnStateChange( );
 	glEsImpl->glGenTextures( n, textures );
 }
 
-void glFrontFace( GLenum mode )
+void GL_MANGLE(glFrontFace)( GLenum mode )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFrontFace( mode );
 }
 // End Vladimir
 
-void glTexEnvi( GLenum target, GLenum pname, GLint param )
+void GL_MANGLE(glTexEnvi)( GLenum target, GLenum pname, GLint param )
 {
 	if( skipnanogl )
 	{
@@ -2346,18 +2357,7 @@ void glTexEnvi( GLenum target, GLenum pname, GLint param )
 	glEsImpl->glTexEnvi( target, pname, param );
 }
 
-#ifdef __MULTITEXTURE_SUPPORT__
-void glMultiTexCoord3fARB( GLenum a, GLfloat b, GLfloat c, GLfloat )
-{
-	return glMultiTexCoord2fARB( a, b, c );
-}
-
-void glMultiTexCoord2f( GLenum a, GLfloat b, GLfloat c )
-{
-	glMultiTexCoord2fARB(a,b,c);
-}
-#endif
-void glDrawArrays( GLenum mode, GLint first, GLsizei count )
+void GL_MANGLE(glDrawArrays)( GLenum mode, GLint first, GLsizei count )
 {
 	if( skipnanogl )
 	{
@@ -2465,71 +2465,71 @@ void glDrawArrays( GLenum mode, GLint first, GLsizei count )
 	arraysValid = GL_FALSE;
 	glEsImpl->glDrawArrays( mode, first, count );
 }
-/*void glNormalPointer(GLenum type, GLsizei stride, const void *ptr)
+/*void GL_MANGLE(glNormalPointer)(GLenum type, GLsizei stride, const void *ptr)
 {
     glEsImpl->glNormalPointer( type, stride, ptr );
 }*/
 
-void glCopyTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height )
+void GL_MANGLE(glCopyTexSubImage2D)( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height )
 {
 	FlushOnStateChange( );
 	glEsImpl->glCopyTexSubImage2D( target, level, xoffset, yoffset, x, y, width, height );
 }
 
-void glGenFramebuffers( GLsizei n, GLuint *framebuffers )
+void GL_MANGLE(glGenFramebuffers)( GLsizei n, GLuint *framebuffers )
 {
 	FlushOnStateChange( );
 	glEsImpl->glGenFramebuffers( n, framebuffers );
 }
 
-void glGenRenderbuffers( GLsizei n, GLuint *renderbuffers )
+void GL_MANGLE(glGenRenderbuffers)( GLsizei n, GLuint *renderbuffers )
 {
 	FlushOnStateChange( );
 	glEsImpl->glGenRenderbuffers( n, renderbuffers );
 }
 
-void glBindRenderbuffer( GLenum target, GLuint renderbuffer )
+void GL_MANGLE(glBindRenderbuffer)( GLenum target, GLuint renderbuffer )
 {
 	FlushOnStateChange( );
 	glEsImpl->glBindRenderbuffer( target, renderbuffer );
 }
 
-void glBindFramebuffer( GLenum target, GLuint framebuffer )
+void GL_MANGLE(glBindFramebuffer)( GLenum target, GLuint framebuffer )
 {
 	FlushOnStateChange( );
 	glEsImpl->glBindFramebuffer( target, framebuffer );
 }
 
-void glFramebufferRenderbuffer( GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer )
+void GL_MANGLE(glFramebufferRenderbuffer)( GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFramebufferRenderbuffer( target, attachment, renderbuffertarget, renderbuffer );
 }
 
-void glDeleteFramebuffers( GLsizei n, const GLuint *framebuffers )
+void GL_MANGLE(glDeleteFramebuffers)( GLsizei n, const GLuint *framebuffers )
 {
 	FlushOnStateChange( );
 	glEsImpl->glDeleteFramebuffers( n, framebuffers );
 }
 
-void glDeleteRenderbuffers( GLsizei n, const GLuint *renderbuffers )
+void GL_MANGLE(glDeleteRenderbuffers)( GLsizei n, const GLuint *renderbuffers )
 {
 	FlushOnStateChange( );
 	glEsImpl->glDeleteRenderbuffers( n, renderbuffers );
 }
-void glFramebufferTexture2D( GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level )
+void GL_MANGLE(glFramebufferTexture2D)( GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level )
 {
 	FlushOnStateChange( );
 	glEsImpl->glFramebufferTexture2D( target, attachment, textarget, texture, level );
 }
 
-void glRenderbufferStorage( GLenum target, GLenum internalformat, GLsizei width, GLsizei height )
+void GL_MANGLE(glRenderbufferStorage)( GLenum target, GLenum internalformat, GLsizei width, GLsizei height )
 {
 	FlushOnStateChange( );
 	glEsImpl->glRenderbufferStorage( target, internalformat, width, height );
 }
 
-void glBindBufferARB( GLuint target, GLuint index )
+void GL_MANGLE(glBindBufferARB)( GLuint target, GLuint index )
 {
 	static int sindex;
 
@@ -2548,27 +2548,47 @@ void glBindBufferARB( GLuint target, GLuint index )
 	sindex = index;
 }
 
-void glGenBuffersARB( GLuint count, GLuint *indexes )
+void GL_MANGLE(glGenBuffersARB)( GLuint count, GLuint *indexes )
 {
 	glEsImpl->glGenBuffers( count, indexes );
 }
 
-void glDeleteBuffersARB( GLuint count, GLuint *indexes )
+void GL_MANGLE(glDeleteBuffersARB)( GLuint count, GLuint *indexes )
 {
 	glEsImpl->glDeleteBuffers( count, indexes );
 }
 
-void glBufferDataARB( GLuint target, GLuint size, void *buffer, GLuint type )
+void GL_MANGLE(glBufferDataARB)( GLuint target, GLuint size, void *buffer, GLuint type )
 {
 	glEsImpl->glBufferData( target, size, buffer, type );
 }
 
-void glBufferSubDataARB( GLuint target, GLsizei offset, GLsizei size, void *buffer )
+void GL_MANGLE(glBufferSubDataARB)( GLuint target, GLsizei offset, GLsizei size, void *buffer )
 {
 	glEsImpl->glBufferSubData( target, offset, size, buffer );
 }
 
-GLboolean glIsEnabled( GLenum cap )
+GLboolean GL_MANGLE(glIsEnabled)( GLenum cap )
 {
 	return glEsImpl->glIsEnabled( cap );
+}
+
+void GL_MANGLE(glDebugMessageControlARB)( GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint* ids, GLboolean enabled )
+{
+	glEsImpl->glDebugMessageControlKHR( source, type, severity, count, ids, enabled );
+}
+
+void GL_MANGLE(glDebugMessageInsertARB)( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* buf )
+{
+	glEsImpl->glDebugMessageInsertKHR( source, type, id, severity, length, buf );
+}
+
+void GL_MANGLE(glDebugMessageCallbackARB)( GL_DEBUG_PROC_ARB callback, void* userParam )
+{
+	glEsImpl->glDebugMessageCallbackKHR( callback, userParam );
+}
+
+GLuint GL_MANGLE(glGetDebugMessageLogARB)( GLuint count, GLsizei bufsize, GLenum* sources, GLenum* types, GLuint* ids, GLuint* severities, GLsizei* lengths, char* messageLog )
+{
+	return glEsImpl->glGetDebugMessageLogKHR( count, bufsize, sources, types, ids, severities, lengths, messageLog );
 }

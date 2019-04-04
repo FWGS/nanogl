@@ -14,6 +14,8 @@ def options(opt):
 def configure(conf):
 	conf.load('sdl2')
 	conf.env.append_unique('DEFINES', '__MULTITEXTURE_SUPPORT__')
+	conf.env.append_unique('DEFINES', 'XASH_SDL')
+	conf.env.append_unique('DEFINES', 'NANOGL_MANGLE_PREPEND')
 	# stub
 	return
 
