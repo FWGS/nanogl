@@ -115,14 +115,14 @@ const char * APIENTRY gl_unimplemented( GLenum none )
 	return "";
 }
 #endif
-#ifdef XASH_SDL
+#ifdef REF_DLL
+#define NANOGL_XASH
+extern "C" void *GL_GetProcAddress( const char *name );
+#elif defined XASH_SDL
 #define NANOGL_SDL
-#endif
-#ifdef __ANDROID__
-#define NANOGL_EGL
-#endif
-#ifdef NANOGL_SDL
 #include "SDL.h"
+#elif __ANDROID__
+#define NANOGL_EGL
 #endif
 
 #ifdef NANOGL_EGL
@@ -132,11 +132,13 @@ void *eglLib;
 void *nanoGL_GetProcAddress( const char *name )
 {
 	void *addr = NULL;
-#ifdef NANOGL_SDL
+#ifdef NANOGL_XASH
+	addr = GL_GetProcAddress( name );
+#elif defined NANOGL_SDL
 	addr = SDL_GL_GetProcAddress( name );
-	if ( !addr )
 #endif
-	addr = procAddress( glesLib, name );
+	if ( !addr )
+		addr = procAddress( glesLib, name );
 #ifdef NANOGL_EGL
 	if( !addr )
 		addr = procAddress( eglLib, name );

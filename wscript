@@ -12,22 +12,19 @@ def options(opt):
 	return
 
 def configure(conf):
-	if conf.env.DEST_OS2 != 'android':
-		conf.load('sdl2')
-		conf.env.append_unique('DEFINES', 'XASH_SDL')
-	else:
+	if conf.env.DEST_OS2 == 'android':
 		conf.check_cc(lib='log')
 	conf.env.append_unique('DEFINES', '__MULTITEXTURE_SUPPORT__')
 	conf.env.append_unique('DEFINES', 'NANOGL_MANGLE_PREPEND')
+	conf.env.append_unique('DEFINES', 'REF_DLL')
 	# stub
 	return
 
 def build(bld):
 	source = bld.path.ant_glob(['*.cpp'])
 	libs = []
-	if bld.env.DEST_OS2 != 'android':
-		libs += ['SDL2']
-	else: libs += ['LOG']
+	if bld.env.DEST_OS2 == 'android':
+		libs += ['LOG']
 	includes = [ '.', 'GL/' ]
 
 	bld.stlib(
