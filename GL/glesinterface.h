@@ -44,7 +44,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 #endif
 
-typedef void ( APIENTRY *GL_DEBUG_PROC_KHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam );
+typedef void ( APIENTRY *GL_DEBUG_PROC_KHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam ) S;
 
 struct GlESInterface
 {
@@ -246,14 +246,14 @@ struct GlESInterface
 	void( APIENTRY *glFramebufferRenderbuffer )( unsigned int target, unsigned int attachment, unsigned int renderbuffertarget, unsigned int renderbuffer ) S;
 	
 // GL_KHR_debug
-	void ( APIENTRY *glDebugMessageControlKHR )( unsigned int source, unsigned int type, unsigned int severity, int count, const unsigned int* ids, unsigned char enabled );
-	void ( APIENTRY *glDebugMessageInsertKHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* buf );
-	void ( APIENTRY *glDebugMessageCallbackKHR )( GL_DEBUG_PROC_KHR callback, void* userParam );
-	unsigned int ( APIENTRY *glGetDebugMessageLogKHR )( unsigned int count, int bufsize, unsigned int* sources, unsigned int* types, unsigned int* ids, unsigned int* severities, int* lengths, char* messageLog );
+	void ( APIENTRY *glDebugMessageControlKHR )( unsigned int source, unsigned int type, unsigned int severity, int count, const unsigned int* ids, unsigned char enabled ) S;
+	void ( APIENTRY *glDebugMessageInsertKHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* buf ) S;
+	void ( APIENTRY *glDebugMessageCallbackKHR )( GL_DEBUG_PROC_KHR callback, void* userParam ) S;
+	unsigned int ( APIENTRY *glGetDebugMessageLogKHR )( unsigned int count, int bufsize, unsigned int* sources, unsigned int* types, unsigned int* ids, unsigned int* severities, int* lengths, char* messageLog ) S;
 
 	
-	void( APIENTRY *glTexGenfvOES )(unsigned int coord, unsigned int pname, const float *params);
-	void( APIENTRY *glTexGeniOES )(unsigned int coord, unsigned int pname, int param);
+	void( APIENTRY *glTexGenfvOES )(unsigned int coord, unsigned int pname, const float *params) S;
+	void( APIENTRY *glTexGeniOES )(unsigned int coord, unsigned int pname, int param) S;
 
 };
 #if !defined( __WINS__ )
