@@ -2575,20 +2575,25 @@ GLboolean GL_MANGLE(glIsEnabled)( GLenum cap )
 
 void GL_MANGLE(glDebugMessageControlARB)( GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint* ids, GLboolean enabled )
 {
-	glEsImpl->glDebugMessageControlKHR( source, type, severity, count, ids, enabled );
+	if( glEsImpl->glDebugMessageControlKHR )
+		glEsImpl->glDebugMessageControlKHR( source, type, severity, count, ids, enabled );
 }
 
 void GL_MANGLE(glDebugMessageInsertARB)( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* buf )
 {
-	glEsImpl->glDebugMessageInsertKHR( source, type, id, severity, length, buf );
+	if( glEsImpl->glDebugMessageInsertKHR )
+		glEsImpl->glDebugMessageInsertKHR( source, type, id, severity, length, buf );
 }
 
 void GL_MANGLE(glDebugMessageCallbackARB)( GL_DEBUG_PROC_ARB callback, void* userParam )
 {
-	glEsImpl->glDebugMessageCallbackKHR( callback, userParam );
+	if( glEsImpl->glDebugMessageCallbackKHR )
+		glEsImpl->glDebugMessageCallbackKHR( callback, userParam );
 }
 
 GLuint GL_MANGLE(glGetDebugMessageLogARB)( GLuint count, GLsizei bufsize, GLenum* sources, GLenum* types, GLuint* ids, GLuint* severities, GLsizei* lengths, char* messageLog )
 {
-	return glEsImpl->glGetDebugMessageLogKHR( count, bufsize, sources, types, ids, severities, lengths, messageLog );
+	if( glEsImpl->glGetDebugMessageLogKHR )
+		return glEsImpl->glGetDebugMessageLogKHR( count, bufsize, sources, types, ids, severities, lengths, messageLog );
+	return 0;
 }
