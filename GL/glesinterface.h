@@ -44,7 +44,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 #endif
 
-typedef void ( APIENTRY *GL_DEBUG_PROC_KHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam ) S;
+typedef void ( APIENTRY *GL_DEBUG_PROC_KHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam );
 
 struct GlESInterface
 {
@@ -251,10 +251,8 @@ struct GlESInterface
 	void ( APIENTRY *glDebugMessageCallbackKHR )( GL_DEBUG_PROC_KHR callback, void* userParam ) S;
 	unsigned int ( APIENTRY *glGetDebugMessageLogKHR )( unsigned int count, int bufsize, unsigned int* sources, unsigned int* types, unsigned int* ids, unsigned int* severities, int* lengths, char* messageLog ) S;
 
-	
 	void( APIENTRY *glTexGenfvOES )(unsigned int coord, unsigned int pname, const float *params) S;
 	void( APIENTRY *glTexGeniOES )(unsigned int coord, unsigned int pname, int param) S;
-
 };
 #if !defined( __WINS__ )
 #if defined( __TARGET_FPU_VFP )
