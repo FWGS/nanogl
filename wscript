@@ -14,9 +14,9 @@ def options(opt):
 def configure(conf):
 	if conf.env.DEST_OS2 == 'android':
 		conf.check_cc(lib='log')
-	conf.env.append_unique('DEFINES', '__MULTITEXTURE_SUPPORT__')
-	conf.env.append_unique('DEFINES', 'NANOGL_MANGLE_PREPEND')
-	conf.env.append_unique('DEFINES', 'REF_DLL')
+	conf.define('__MULTITEXTURE_SUPPORT__', 1)
+	conf.define('NANOGL_MANGLE_PREPEND', 1)
+	conf.define('REF_DLL', 1)
 	# stub
 	return
 
