@@ -382,11 +382,12 @@ void FlushOnStateChange( )
 #if defined( __MULTITEXTURE_SUPPORT__ )
 	useMultiTexCoordArray = GL_FALSE;
 #endif
-	vertexCount              = 0;
-	indexCount               = 0;
-	ptrVertexAttribArray     = vertexattribs;
-	ptrVertexAttribArrayMark = ptrVertexAttribArray;
+	vertexMark               = vertexCount          = 0;
+	indexbase                = indexCount           = 0;
+	ptrVertexAttribArrayMark = ptrVertexAttribArray = vertexattribs;
+
 	ptrIndexArray            = indexArray;
+
 	useTexCoordArray         = GL_FALSE;
 }
 void nanoGL_Flush( )
