@@ -417,14 +417,19 @@ void GL_MANGLE(glEnd)( void )
 	{
 	case GL_QUADS:
 	{
-		*ptrIndexArray++ = indexCount;
-		*ptrIndexArray++ = indexCount + 1;
-		*ptrIndexArray++ = indexCount + 2;
-		*ptrIndexArray++ = indexCount;
-		*ptrIndexArray++ = indexCount + 2;
-		*ptrIndexArray++ = indexCount + 3;
-		indexCount += 4;
-		vertexCount += 2;
+		int qcount = ( vertexCount - vertexMark ) / 4;
+
+		for ( int count = 0; count < qcount; count++ )
+		{
+			*ptrIndexArray++ = indexCount;
+			*ptrIndexArray++ = indexCount + 1;
+			*ptrIndexArray++ = indexCount + 2;
+			*ptrIndexArray++ = indexCount;
+			*ptrIndexArray++ = indexCount + 2;
+			*ptrIndexArray++ = indexCount + 3;
+			indexCount += 4;
+			vertexCount += 2;
+		}
 	}
 	break;
 	case GL_TRIANGLES:
