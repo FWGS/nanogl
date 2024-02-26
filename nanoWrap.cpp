@@ -2368,6 +2368,18 @@ void GL_MANGLE(glTexEnvi)( GLenum target, GLenum pname, GLint param )
 	glEsImpl->glTexEnvi( target, pname, param );
 }
 
+void GL_MANGLE(glTexEnvfv)( GLenum target, GLenum pname, const GLfloat *param )
+{
+	if( skipnanogl )
+	{
+		glEsImpl->glTexEnvfv( target, pname, param );
+		return;
+	}
+
+	FlushOnStateChange( );
+	glEsImpl->glTexEnvfv( target, pname, param );
+}
+
 void GL_MANGLE(glDrawArrays)( GLenum mode, GLint first, GLsizei count )
 {
 	if( skipnanogl )

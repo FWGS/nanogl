@@ -705,6 +705,7 @@ void GL_MANGLE(glColor4ub)( GLubyte red, GLubyte green, GLubyte blue, GLubyte al
 void GL_MANGLE(glCopyTexSubImage2D)( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height );
 
 void GL_MANGLE(glTexEnvi)( GLenum target, GLenum pname, GLint param );
+void GL_MANGLE(glTexEnvfv)( GLenum target, GLenum pname, const GLfloat *param );
 
 void GL_MANGLE(glBindFramebuffer)( GLenum target, GLuint framebuffer );
 void GL_MANGLE(glDeleteFramebuffers)( GLsizei n, const GLuint *framebuffers );
