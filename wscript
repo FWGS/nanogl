@@ -30,7 +30,6 @@ def build(bld):
 	bld.stlib(
 		source   = source,
 		target   = 'nanogl',
-		features = 'cxx',
 		includes = includes,
 		use      = libs,
 		subsystem = bld.env.MSVC_SUBSYSTEM
