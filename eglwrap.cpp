@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -47,6 +47,7 @@ EGLBoolean eglTerminate( EGLDisplay dpy )
 {
 	return glEsImpl->eglTerminate( dpy );
 }
+
 const char *eglQueryString( EGLDisplay dpy, EGLint name )
 {
 	return glEsImpl->eglQueryString( dpy, name );
@@ -59,17 +60,17 @@ extern "C" void glMultiTexCoord2fARB( GLenum target, GLfloat s, GLfloat t );
 void *eglGetProcAddress( const char *procname )
 {
 #if defined( __MULTITEXTURE_SUPPORT__ )
-	if ( !strcmp( procname, "glMultiTexCoord2fARB" ) )
+	if( !strcmp( procname, "glMultiTexCoord2fARB" ))
 	{
-		return (void *)&GL_MANGLE_NAME(glMultiTexCoord2fARB);
+		return (void *)&GL_MANGLE_NAME( glMultiTexCoord2fARB );
 	}
-	else if ( !strcmp( procname, "glActiveTextureARB" ) )
+	else if( !strcmp( procname, "glActiveTextureARB" ))
 	{
-		return (void *)&GL_MANGLE_NAME(glActiveTexture);
+		return (void *)&GL_MANGLE_NAME( glActiveTexture );
 	}
-	else if ( !strcmp( procname, "glClientActiveTextureARB" ) )
+	else if( !strcmp( procname, "glClientActiveTextureARB" ))
 	{
-		return (void *)&GL_MANGLE_NAME(glClientActiveTexture);
+		return (void *)&GL_MANGLE_NAME( glClientActiveTexture );
 	}
 
 #endif
@@ -110,10 +111,12 @@ EGLBoolean eglDestroySurface( EGLDisplay dpy, EGLSurface surface )
 {
 	return glEsImpl->eglDestroySurface( dpy, surface );
 }
+
 EGLBoolean eglQuerySurface( EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint *value )
 {
 	return glEsImpl->eglQuerySurface( dpy, surface, attribute, value );
 }
+
 /* EGL 1.1 render-to-texture APIs */
 EGLBoolean eglSurfaceAttrib( EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint value )
 {
@@ -124,6 +127,7 @@ EGLBoolean eglBindTexImage( EGLDisplay dpy, EGLSurface surface, EGLint buffer )
 {
 	return glEsImpl->eglBindTexImage( dpy, surface, buffer );
 }
+
 EGLBoolean eglReleaseTexImage( EGLDisplay dpy, EGLSurface surface, EGLint buffer )
 {
 	return glEsImpl->eglReleaseTexImage( dpy, surface, buffer );
@@ -155,15 +159,17 @@ EGLContext eglGetCurrentContext( void )
 {
 	return glEsImpl->eglGetCurrentContext( );
 }
+
 EGLSurface eglGetCurrentSurface( EGLint readdraw )
 {
-	if ( (void *)glEsImpl->eglGetCurrentSurface == (void *)gl_unimplemented )
+	if((void *)glEsImpl->eglGetCurrentSurface == (void *)gl_unimplemented )
 		return EGL_NO_SURFACE;
 	return glEsImpl->eglGetCurrentSurface( readdraw );
 }
+
 EGLDisplay eglGetCurrentDisplay( void )
 {
-	if ( (void *)glEsImpl->eglGetCurrentDisplay == (void *)gl_unimplemented )
+	if((void *)glEsImpl->eglGetCurrentDisplay == (void *)gl_unimplemented )
 		return EGL_NO_DISPLAY;
 	return glEsImpl->eglGetCurrentDisplay( );
 }
