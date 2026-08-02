@@ -528,8 +528,8 @@ void GL_MANGLE( glEnd )( void )
 	default:
 		break;
 	}
-	if( ptrVertexAttribArray - vertexattribs > 20000 * sizeof( VertexAttrib )
-	    || ptrIndexArray - indexArray > 15000 * sizeof( GLushort ))
+	if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096
+	    || ptrIndexArray - indexArray > ( sizeof( indexArray ) / sizeof( indexArray[0] )) - 4096 )
 		FlushOnStateChange( );
 }
 
