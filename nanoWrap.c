@@ -390,7 +390,7 @@ static void FlushOnStateChange( void )
 		useMultiTexCoordArray = multitex;
 	}
 
-	glEsImpl->glDrawElements( GL_TRIANGLES, vertexCount, GL_UNSIGNED_SHORT, indexArray );
+	glEsImpl->glDrawElements( GL_TRIANGLES, (GLsizei)( ptrIndexArray - indexArray ), GL_UNSIGNED_SHORT, indexArray );
 
 	vertexMark = vertexCount = 0;
 	indexbase = indexCount = 0;
@@ -424,6 +424,8 @@ void GL_MANGLE( glEnd )( void )
 	vertexCount += ((unsigned char *)ptrVertexAttribArray - (unsigned char *)ptrVertexAttribArrayMark ) / sizeof( VertexAttrib );
 	if( vertexCount < 3 )
 	{
+		vertexCount = vertexMark;
+		ptrVertexAttribArray = ptrVertexAttribArrayMark;
 		return;
 	}
 	switch( wrapperPrimitiveMode )
@@ -502,6 +504,8 @@ void GL_MANGLE( glEnd )( void )
 	break;
 
 	default:
+		vertexCount = vertexMark;
+		ptrVertexAttribArray = ptrVertexAttribArrayMark;
 		break;
 	}
 	if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096
