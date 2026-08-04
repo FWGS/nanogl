@@ -1,10 +1,10 @@
-#include <stdio.h>
-#include <string.h>
 #include "gl.h"
 #include "glesinterface.h"
 #include "nanogl.h"
+#include <stdio.h>
+#include <string.h>
 
-#define MAX_DRAWS 8
+#define MAX_DRAWS   8
 #define MAX_INDICES 64
 
 static struct
@@ -13,6 +13,7 @@ static struct
 	GLsizei count;
 	GLushort indices[MAX_INDICES];
 } draws[MAX_DRAWS];
+
 static int numdraws;
 
 static void APIENTRY StubNop( void )
@@ -60,7 +61,7 @@ static int CheckDraw( int draw, GLenum mode, GLsizei count, const GLushort *expe
 static void EmitVertices( int n )
 {
 	for( int i = 0; i < n; i++ )
-		pglVertex3f( (GLfloat)i, 0.0f, 0.0f );
+		pglVertex3f((GLfloat)i, 0.0f, 0.0f );
 }
 
 static int Test_ExtensionsString( void )
@@ -74,7 +75,7 @@ static int Test_ExtensionsString( void )
 
 static int Test_TwoQuads( void )
 {
-	static const GLushort expect[] = {0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7};
+	static const GLushort expect[] = { 0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7 };
 
 	numdraws = 0;
 	pglBegin( GL_QUADS );
@@ -89,7 +90,7 @@ static int Test_TwoQuads( void )
 
 static int Test_Lines( void )
 {
-	static const GLushort expect[] = {0, 1, 2, 3};
+	static const GLushort expect[] = { 0, 1, 2, 3 };
 
 	numdraws = 0;
 	pglBegin( GL_LINES );
@@ -104,7 +105,7 @@ static int Test_Lines( void )
 
 static int Test_LineStrip( void )
 {
-	static const GLushort expect[] = {0, 1, 1, 2, 2, 3};
+	static const GLushort expect[] = { 0, 1, 1, 2, 2, 3 };
 
 	numdraws = 0;
 	pglBegin( GL_LINE_STRIP );
@@ -119,7 +120,7 @@ static int Test_LineStrip( void )
 
 static int Test_LineLoop( void )
 {
-	static const GLushort expect[] = {0, 1, 1, 2, 2, 0};
+	static const GLushort expect[] = { 0, 1, 1, 2, 2, 0 };
 
 	numdraws = 0;
 	pglBegin( GL_LINE_LOOP );
@@ -134,8 +135,8 @@ static int Test_LineLoop( void )
 
 static int Test_ClassChangeFlush( void )
 {
-	static const GLushort expectquad[] = {0, 1, 2, 0, 2, 3};
-	static const GLushort expectline[] = {0, 1};
+	static const GLushort expectquad[] = { 0, 1, 2, 0, 2, 3 };
+	static const GLushort expectline[] = { 0, 1 };
 
 	numdraws = 0;
 	pglBegin( GL_QUADS );
@@ -153,7 +154,7 @@ static int Test_ClassChangeFlush( void )
 
 static int Test_OddLinesVertexDropped( void )
 {
-	static const GLushort expect[] = {0, 1, 2, 3};
+	static const GLushort expect[] = { 0, 1, 2, 3 };
 
 	numdraws = 0;
 	pglBegin( GL_LINES );
@@ -171,7 +172,7 @@ static int Test_OddLinesVertexDropped( void )
 
 static int Test_Points( void )
 {
-	static const GLushort expect[] = {0, 1, 2};
+	static const GLushort expect[] = { 0, 1, 2 };
 
 	numdraws = 0;
 	pglBegin( GL_POINTS );
@@ -186,7 +187,7 @@ static int Test_Points( void )
 
 static int Test_UnsupportedBlockDiscarded( void )
 {
-	static const GLushort expect[] = {0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7};
+	static const GLushort expect[] = { 0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7 };
 
 	numdraws = 0;
 	pglBegin( GL_QUADS );
@@ -205,7 +206,16 @@ static int Test_UnsupportedBlockDiscarded( void )
 	return CheckDraw( 0, GL_TRIANGLES, 12, expect );
 }
 
-#define RUN_TEST( fn ) do { if( fn()) { printf( "FAIL: " #fn "\n" ); ret++; } } while( 0 )
+#define RUN_TEST( fn )                   \
+	do                                   \
+	{                                    \
+		if( fn())                       \
+		{                                \
+			printf( "FAIL: " #fn "\n" ); \
+			ret++;                       \
+		}                                \
+	}                                    \
+	while( 0 )
 
 int main( void )
 {

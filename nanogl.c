@@ -26,65 +26,67 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // #include <cutils/log.h>
 
-#include "nanogl.h"
-#include "glesinterface.h"
 #include "gl.h"
+#include "glesinterface.h"
+#include "nanogl.h"
 #include "nanogl_private.h"
 
 #define DEBUG_NANO 0
 
 #ifdef __ANDROID__
-	#include <android/log.h>
-	#define LOG __android_log_print
-	#define LOGI( ... ) __android_log_print( ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__ )
-	#define LOGD( ... ) if( DEBUG_NANO ) \
-		__android_log_print( ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
-	#define LOGE( ... ) __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
-	#define LOGW( ... ) __android_log_print( ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__ )
+#include <android/log.h>
+#define LOG         __android_log_print
+#define LOGI( ... ) __android_log_print( ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__ )
+#define LOGD( ... )                                                \
+	if( DEBUG_NANO )                                               \
+	__android_log_print( ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
+#define LOGE( ... ) __android_log_print( ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
+#define LOGW( ... ) __android_log_print( ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__ )
 #elif !defined( _MSC_VER )
-	#define LOGI( ... )		     \
-		printf( "I: " __VA_ARGS__ ); \
-		printf( "\n" )
-	#define LOGD( ... )			     \
-		if( DEBUG_NANO )		     \
-		{				     \
-			printf( "D: " __VA_ARGS__ ); \
-			printf( "\n" );		     \
-		}
-	#define LOGE( ... )		     \
-		printf( "E: " __VA_ARGS__ ); \
-		printf( "\n" )
-	#define LOGW( ... )		     \
-		printf( "W: " __VA_ARGS__ ); \
-		printf( "\n" )
+#define LOGI( ... )              \
+	printf( "I: " __VA_ARGS__ ); \
+	printf( "\n" )
+#define LOGD( ... )                  \
+	if( DEBUG_NANO )                 \
+	{                                \
+		printf( "D: " __VA_ARGS__ ); \
+		printf( "\n" );              \
+	}
+#define LOGE( ... )              \
+	printf( "E: " __VA_ARGS__ ); \
+	printf( "\n" )
+#define LOGW( ... )              \
+	printf( "W: " __VA_ARGS__ ); \
+	printf( "\n" )
 #else
-	#define LOGI printf
-	#define LOGD printf
-	#define LOGE printf
-	#define LOGW printf
+#define LOGI printf
+#define LOGD printf
+#define LOGE printf
+#define LOGW printf
 #endif
 
 #ifdef _WIN32
-	#include <windows.h>
-	#define loadDriver( x )     LoadLibraryA( x )
-	#define procAddress( x, y ) ((void *) GetProcAddress((HINSTANCE)x, y ))
-	#define freeDriver( x )     FreeLibrary((HINSTANCE)x )
-	#define GL_LIB   "opengl32.dll"
-	#define GLES_LIB "GLESv1_CM.dll"
-	#define EGL_LIB  "EGL.dll"
+#include <windows.h>
+#define loadDriver( x )     LoadLibraryA( x )
+#define procAddress( x, y ) ((void *)GetProcAddress((HINSTANCE)x, y ))
+#define freeDriver( x )     FreeLibrary((HINSTANCE)x )
+#define GL_LIB              "opengl32.dll"
+#define GLES_LIB            "GLESv1_CM.dll"
+#define EGL_LIB             "EGL.dll"
 #else
-	#include <dlfcn.h>
-	#define loadDriver( x )     dlopen( x, RTLD_NOW | RTLD_LOCAL )
-	#define procAddress( x, y ) dlsym( x, y )
-	#define freeDriver( x )     dlclose( x )
-	#define GL_LIB   "libGL.so.1"
-	#define GLES_LIB "libGLESv1_CM.so"
-	#define EGL_LIB  "libEGL.so"
+#include <dlfcn.h>
+#define loadDriver( x )     dlopen( x, RTLD_NOW | RTLD_LOCAL )
+#define procAddress( x, y ) dlsym( x, y )
+#define freeDriver( x )     dlclose( x )
+#define GL_LIB              "libGL.so.1"
+#define GLES_LIB            "libGLESv1_CM.so"
+#define EGL_LIB             "libEGL.so"
 #endif
 
 static char const *const gl_names[] = {
 #include "funcnames.h"
-NULL };
+	NULL
+};
 
 GlESInterface *glEsImpl = NULL;
 
@@ -184,7 +186,7 @@ int nanoGL_Init( void )
 
 	strcpy( nano_extensions_string, ext );
 	nano_extensions_string[extlen] = ' ';
-	strcpy( &nano_extensions_string[extlen+1], add );
+	strcpy( &nano_extensions_string[extlen + 1], add );
 
 	// it has loaded something, maybe it will work
 	return 1;

@@ -22,10 +22,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <e32std.h>
 */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "gl.h"
 #include "glesinterface.h"
@@ -69,24 +69,23 @@ struct nanoState
 	GLboolean scissor_test;
 	GLboolean stencil_test;
 	GLboolean depthmask;
-	GLclampd  depth_range_near;
-	GLclampd  depth_range_far;
-	GLenum    depth_func;
-	GLenum    cullface;
-	GLenum    shademodel;
-	GLenum    sfactor;
-	GLenum    dfactor;
-	GLenum    matrixmode;
-	GLenum    alphafunc;
-	GLclampf  alpharef;
-	GLint     viewport[4];
-	GLint     scissorbox[4];
+	GLclampd depth_range_near;
+	GLclampd depth_range_far;
+	GLenum depth_func;
+	GLenum cullface;
+	GLenum shademodel;
+	GLenum sfactor;
+	GLenum dfactor;
+	GLenum matrixmode;
+	GLenum alphafunc;
+	GLclampf alpharef;
+	GLint viewport[4];
+	GLint scissorbox[4];
 };
 
 static struct nanoState nanoglState;
 
-static struct nanoState nanoglInitState =
-{
+static struct nanoState nanoglInitState = {
 	GL_FALSE,
 	GL_FALSE,
 	GL_FALSE,
@@ -129,8 +128,8 @@ static struct nanoState nanoglInitState =
 	GL_MODELVIEW,
 	GL_ALWAYS,
 	0.0f,
-	{-1, -1, -1, -1},
-	{-1, -1, -1, -1},
+	{ -1, -1, -1, -1 },
+	{ -1, -1, -1, -1 },
 };
 
 struct booleanstate
@@ -141,22 +140,22 @@ struct booleanstate
 
 struct floatstate
 {
-	GLfloat   value;
+	GLfloat value;
 	GLboolean changed;
 };
 
 struct uintstate
 {
-	GLuint    value;
+	GLuint value;
 	GLboolean changed;
 };
 
 struct ptrstate
 {
-	GLint     size;
-	GLenum    type;
-	GLsizei   stride;
-	GLvoid    *ptr;
+	GLint size;
+	GLenum type;
+	GLsizei stride;
+	GLvoid *ptr;
 	GLboolean changed;
 	GLboolean enabled;
 };
@@ -164,35 +163,34 @@ struct ptrstate
 struct nanotmuState
 {
 	struct booleanstate texture_2d;
-	struct floatstate   texture_env_mode;
-	struct uintstate    boundtexture;
-	struct ptrstate     vertex_array;
-	struct ptrstate     color_array;
-	struct ptrstate     texture_coord_array;
-	struct ptrstate     normal_array;
+	struct floatstate texture_env_mode;
+	struct uintstate boundtexture;
+	struct ptrstate vertex_array;
+	struct ptrstate color_array;
+	struct ptrstate texture_coord_array;
+	struct ptrstate normal_array;
 };
 
 static struct nanotmuState tmuState0;
 static struct nanotmuState tmuState1;
 
-static struct nanotmuState tmuInitState =
-{
-	{GL_FALSE, GL_FALSE},
-	{GL_MODULATE, GL_FALSE},
-	{0x7fffffff, GL_FALSE},
-	{4, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE},
-	{4, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE},
-	{4, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE},
-	{3, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE},
+static struct nanotmuState tmuInitState = {
+	{ GL_FALSE, GL_FALSE },
+	{ GL_MODULATE, GL_FALSE },
+	{ 0x7fffffff, GL_FALSE },
+	{ 4, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE },
+	{ 4, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE },
+	{ 4, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE },
+	{ 3, GL_FLOAT, 0, NULL, GL_FALSE, GL_FALSE },
 };
 
 static struct nanotmuState *activetmuState = &tmuState0;
 
-extern GlESInterface       *glEsImpl;
+extern GlESInterface *glEsImpl;
 
 static GLenum wrapperPrimitiveMode = GL_QUADS;
 static GLenum batchedPrimitiveMode = GL_TRIANGLES;
-GLboolean     useTexCoordArray = GL_FALSE;
+GLboolean useTexCoordArray = GL_FALSE;
 static GLenum activetmu = GL_TEXTURE0;
 static GLenum clientactivetmu = GL_TEXTURE0;
 
@@ -219,23 +217,23 @@ typedef struct VertexAttrib
 
 static VertexAttrib vertexattribs[60000];
 
-static GLushort     indexArray[50000];
+static GLushort indexArray[50000];
 
 static GLuint vertexCount = 0;
 static GLuint indexCount = 0;
 static GLuint vertexMark = 0;
-static int    indexbase = 0;
+static int indexbase = 0;
 
 static VertexAttrib *ptrVertexAttribArray = NULL;
 static VertexAttrib *ptrVertexAttribArrayMark = NULL;
 
 static VertexAttrib currentVertexAttrib;
-static VertexAttrib currentVertexAttribInit = {0.0f, 0.0f, 0.0f, 255, 255, 255, 255, 0.0f, 0.0f, 0.0f, 0.0f};
-static GLushort     *ptrIndexArray = NULL;
+static VertexAttrib currentVertexAttribInit = { 0.0f, 0.0f, 0.0f, 255, 255, 255, 255, 0.0f, 0.0f, 0.0f, 0.0f };
+static GLushort *ptrIndexArray = NULL;
 
-static GLboolean    arraysValid = GL_FALSE;
+static GLboolean arraysValid = GL_FALSE;
 
-static GLboolean    skipnanogl;
+static GLboolean skipnanogl;
 
 void InitGLStructs( void )
 {
@@ -265,7 +263,6 @@ void InitGLStructs( void )
 
 static void ResetNanoState( void )
 {
-
 	if( tmuState0.color_array.enabled )
 	{
 		glEsImpl->glEnableClientState( GL_COLOR_ARRAY );
@@ -302,19 +299,19 @@ static void ResetNanoState( void )
 		glEsImpl->glDisableClientState( GL_NORMAL_ARRAY );
 	}
 	glEsImpl->glVertexPointer( tmuState0.vertex_array.size,
-				   tmuState0.vertex_array.type,
-				   tmuState0.vertex_array.stride,
-				   tmuState0.vertex_array.ptr );
+		tmuState0.vertex_array.type,
+		tmuState0.vertex_array.stride,
+		tmuState0.vertex_array.ptr );
 
 	glEsImpl->glTexCoordPointer( tmuState0.texture_coord_array.size,
-				     tmuState0.texture_coord_array.type,
-				     tmuState0.texture_coord_array.stride,
-				     tmuState0.texture_coord_array.ptr );
+		tmuState0.texture_coord_array.type,
+		tmuState0.texture_coord_array.stride,
+		tmuState0.texture_coord_array.ptr );
 
 	glEsImpl->glColorPointer( tmuState0.color_array.size,
-				  tmuState0.color_array.type,
-				  tmuState0.color_array.stride,
-				  tmuState0.color_array.ptr );
+		tmuState0.color_array.type,
+		tmuState0.color_array.stride,
+		tmuState0.color_array.ptr );
 
 	glEsImpl->glNormalPointer(
 		tmuState0.normal_array.type,
@@ -323,8 +320,7 @@ static void ResetNanoState( void )
 
 	glEsImpl->glMatrixMode( nanoglState.matrixmode );
 
-	glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-			     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+	glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 
 	glEsImpl->glBlendFunc( nanoglState.sfactor, nanoglState.dfactor );
 
@@ -405,12 +401,12 @@ static void FlushOnStateChange( void )
 
 void nanoGL_Flush( void )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 }
 
 void nanoGL_Reset( void )
 {
-	ResetNanoState( );
+	ResetNanoState();
 }
 
 void GL_MANGLE( glBegin )( GLenum mode )
@@ -426,7 +422,7 @@ void GL_MANGLE( glBegin )( GLenum mode )
 
 	if( batchmode != batchedPrimitiveMode )
 	{
-		FlushOnStateChange( );
+		FlushOnStateChange();
 		batchedPrimitiveMode = batchmode;
 	}
 
@@ -439,7 +435,14 @@ void GL_MANGLE( glBegin )( GLenum mode )
 void GL_MANGLE( glEnd )( void )
 {
 	GLuint blockverts = ((unsigned char *)ptrVertexAttribArray - (unsigned char *)ptrVertexAttribArrayMark ) / sizeof( VertexAttrib );
-	GLuint minverts = batchedPrimitiveMode == GL_POINTS ? 1 : batchedPrimitiveMode == GL_LINES ? 2 : 3;
+	GLuint minverts;
+
+	if( batchedPrimitiveMode == GL_POINTS )
+		minverts = 1;
+	else if( batchedPrimitiveMode == GL_LINES )
+		minverts = 2;
+	else
+		minverts = 3;
 
 	vertexCount += blockverts;
 	if( blockverts < minverts )
@@ -575,9 +578,8 @@ void GL_MANGLE( glEnd )( void )
 		ptrVertexAttribArray = ptrVertexAttribArrayMark;
 		break;
 	}
-	if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096
-	    || ptrIndexArray - indexArray > ( sizeof( indexArray ) / sizeof( indexArray[0] )) - 4096 )
-		FlushOnStateChange( );
+	if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096 || ptrIndexArray - indexArray > ( sizeof( indexArray ) / sizeof( indexArray[0] )) - 4096 )
+		FlushOnStateChange();
 }
 
 void GL_MANGLE( glEnable )( GLenum cap )
@@ -754,14 +756,14 @@ void GL_MANGLE( glEnable )( GLenum cap )
 		break;
 	}
 	/*        case GL_MATRIX_PALETTE_OES:
-	    {
-	    if (!nanoglState.matrix_palette_oes)
-	        {
-	        nanoglState.matrix_palette_oes = GL_TRUE;
-	        statechanged = GL_TRUE;
-	        }
-	    break;
-	    }*/
+		{
+		if (!nanoglState.matrix_palette_oes)
+		    {
+		    nanoglState.matrix_palette_oes = GL_TRUE;
+		    statechanged = GL_TRUE;
+		    }
+		break;
+		}*/
 	case GL_MULTISAMPLE:
 	{
 		if( !nanoglState.multisample )
@@ -781,14 +783,14 @@ void GL_MANGLE( glEnable )( GLenum cap )
 		break;
 	}
 	/*        case GL_POINT_SPRITE_OES:
-	    {
-	    if (!nanoglState.point_sprite_oes)
-	        {
-	        nanoglState.point_sprite_oes = GL_TRUE;
-	        statechanged = GL_TRUE;
-	        }
-	    break;
-	    }*/
+		{
+		if (!nanoglState.point_sprite_oes)
+		    {
+		    nanoglState.point_sprite_oes = GL_TRUE;
+		    statechanged = GL_TRUE;
+		    }
+		break;
+		}*/
 	case GL_POLYGON_OFFSET_FILL:
 	{
 		if( !nanoglState.polygon_offset_fill )
@@ -856,7 +858,7 @@ void GL_MANGLE( glEnable )( GLenum cap )
 	{
 		if( !activetmuState->texture_2d.value )
 		{
-			FlushOnStateChange( );
+			FlushOnStateChange();
 			glEsImpl->glEnable( cap );
 			activetmuState->texture_2d.value = GL_TRUE;
 			return;
@@ -880,7 +882,7 @@ void GL_MANGLE( glEnable )( GLenum cap )
 
 	if( statechanged )
 	{
-		FlushOnStateChange( );
+		FlushOnStateChange();
 		glEsImpl->glEnable( cap );
 	}
 }
@@ -1059,14 +1061,14 @@ void GL_MANGLE( glDisable )( GLenum cap )
 		break;
 	}
 	/*        case GL_MATRIX_PALETTE_OES:
-	    {
-	    if (nanoglState.matrix_palette_oes)
-	        {
-	        nanoglState.matrix_palette_oes = GL_FALSE;
-	        statechanged = GL_TRUE;
-	        }
-	    break;
-	    }*/
+		{
+		if (nanoglState.matrix_palette_oes)
+		    {
+		    nanoglState.matrix_palette_oes = GL_FALSE;
+		    statechanged = GL_TRUE;
+		    }
+		break;
+		}*/
 	case GL_MULTISAMPLE:
 	{
 		if( nanoglState.multisample )
@@ -1086,14 +1088,14 @@ void GL_MANGLE( glDisable )( GLenum cap )
 		break;
 	}
 	/*        case GL_POINT_SPRITE_OES:
-	    {
-	    if (nanoglState.point_sprite_oes)
-	        {
-	        nanoglState.point_sprite_oes = GL_FALSE;
-	        statechanged = GL_TRUE;
-	        }
-	    break;
-	    }*/
+		{
+		if (nanoglState.point_sprite_oes)
+		    {
+		    nanoglState.point_sprite_oes = GL_FALSE;
+		    statechanged = GL_TRUE;
+		    }
+		break;
+		}*/
 	case GL_POLYGON_OFFSET_FILL:
 	{
 		if( nanoglState.polygon_offset_fill )
@@ -1161,7 +1163,7 @@ void GL_MANGLE( glDisable )( GLenum cap )
 	{
 		if( activetmuState->texture_2d.value )
 		{
-			FlushOnStateChange( );
+			FlushOnStateChange();
 			glEsImpl->glDisable( cap );
 			activetmuState->texture_2d.value = GL_FALSE;
 			return;
@@ -1185,7 +1187,7 @@ void GL_MANGLE( glDisable )( GLenum cap )
 
 	if( statechanged )
 	{
-		FlushOnStateChange( );
+		FlushOnStateChange();
 		glEsImpl->glDisable( cap );
 	}
 }
@@ -1233,14 +1235,14 @@ void GL_MANGLE( glViewport )( GLint x, GLint y, GLsizei width, GLsizei height )
 	nanoglState.viewport[1] = y;
 	nanoglState.viewport[2] = width;
 	nanoglState.viewport[3] = height;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glViewport( x, y, width, height );
 }
 
 void GL_MANGLE( glLoadIdentity )( void )
 {
-	FlushOnStateChange( );
-	glEsImpl->glLoadIdentity( );
+	FlushOnStateChange();
+	glEsImpl->glLoadIdentity();
 }
 
 void GL_MANGLE( glColor4f )( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
@@ -1250,14 +1252,12 @@ void GL_MANGLE( glColor4f )( GLfloat red, GLfloat green, GLfloat blue, GLfloat a
 	currentVertexAttrib.blue = (unsigned char)ClampTo255( blue * 255.0f );
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( alpha * 255.0f );
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
-
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 void GL_MANGLE( glOrtho )( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 #ifdef USE_CORE_PROFILE
 	glEsImpl->glOrtho( left, right, bottom, top, zNear, zFar );
 #else
@@ -1268,43 +1268,49 @@ void GL_MANGLE( glOrtho )( GLdouble left, GLdouble right, GLdouble bottom, GLdou
 // Rikku2000: Light
 void GL_MANGLE( glLightf )( GLenum light, GLenum pname, GLfloat param )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glLightf( light, pname, param );
 }
+
 void GL_MANGLE( glLightfv )( GLenum light, GLenum pname, const GLfloat *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glLightfv( light, pname, params );
 }
+
 void GL_MANGLE( glLightModelf )( GLenum pname, GLfloat param )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glLightModelf( pname, param );
 }
+
 void GL_MANGLE( glLightModelfv )( GLenum pname, const GLfloat *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glLightModelfv( pname, params );
 }
+
 void GL_MANGLE( glMaterialf )( GLenum face, GLenum pname, GLfloat param )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glMaterialf( face, pname, param );
 }
+
 void GL_MANGLE( glMaterialfv )( GLenum face, GLenum pname, const GLfloat *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glMaterialfv( face, pname, params );
 }
+
 void GL_MANGLE( glColorMaterial )( GLenum face, GLenum mode )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 
 	glEsImpl->glColorMaterial( face, mode );
 }
@@ -1316,7 +1322,7 @@ void GL_MANGLE( glMatrixMode )( GLenum mode )
 		return;
 	}
 	nanoglState.matrixmode = mode;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glMatrixMode( mode );
 }
 
@@ -1326,14 +1332,12 @@ void GL_MANGLE( glTexParameterf )( GLenum target, GLenum pname, GLfloat param )
 	{
 		return; // not supported by opengl es
 	}
-	if(( pname == GL_TEXTURE_WRAP_S
-	     || pname == GL_TEXTURE_WRAP_T )
-	   && param == GL_CLAMP )
+	if(( pname == GL_TEXTURE_WRAP_S || pname == GL_TEXTURE_WRAP_T ) && param == GL_CLAMP )
 	{
 		param = 0x812F;
 	}
 
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexParameterf( target, pname, param );
 }
 
@@ -1346,10 +1350,14 @@ void GL_MANGLE( glTexImage2D )( GLenum target, GLint level, GLint internalformat
 {
 	unsigned char *data = (unsigned char *)pixels;
 
-	if( pixels && format == GL_RGBA && ( internalformat == GL_RGB || internalformat == GL_RGB8 || internalformat == GL_RGB5
-		    || internalformat == GL_LUMINANCE || internalformat == GL_LUMINANCE8 || internalformat == GL_LUMINANCE4 )) // strip alpha from texture
+	if( pixels && format == GL_RGBA && ( internalformat == GL_RGB || internalformat == GL_RGB8 || internalformat == GL_RGB5 || internalformat == GL_LUMINANCE || internalformat == GL_LUMINANCE8 || internalformat == GL_LUMINANCE4 )) // strip alpha from texture
 	{
-		const union { unsigned char b[4]; unsigned int u; } alphamask = {{0, 0, 0, 255}};
+		const union
+		{
+			unsigned char b[4];
+			unsigned int u;
+		} alphamask = { { 0, 0, 0, 255 } };
+
 		const unsigned int *restrict in = (const unsigned int *)pixels;
 		unsigned int *restrict out;
 		int size = width * height;
@@ -1375,19 +1383,19 @@ void GL_MANGLE( glDrawBuffer )( GLenum mode )
 
 void GL_MANGLE( glTranslatef )( GLfloat x, GLfloat y, GLfloat z )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTranslatef( x, y, z );
 }
 
 void GL_MANGLE( glRotatef )( GLfloat angle, GLfloat x, GLfloat y, GLfloat z )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glRotatef( angle, x, y, z );
 }
 
 void GL_MANGLE( glScalef )( GLfloat x, GLfloat y, GLfloat z )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glScalef( x, y, z );
 }
 
@@ -1402,7 +1410,7 @@ void GL_MANGLE( glDepthRange )( GLclampd zNear, GLclampd zFar )
 		nanoglState.depth_range_near = zNear;
 		nanoglState.depth_range_far = zFar;
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 #ifdef USE_CORE_PROFILE
 	glEsImpl->glDepthRange( zNear, zFar );
 #else
@@ -1420,19 +1428,19 @@ void GL_MANGLE( glDepthFunc )( GLenum func )
 	{
 		nanoglState.depth_func = func;
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glDepthFunc( func );
 }
 
 void GL_MANGLE( glFinish )( void )
 {
-	FlushOnStateChange( );
-	glEsImpl->glFinish( );
+	FlushOnStateChange();
+	glEsImpl->glFinish();
 }
 
 void GL_MANGLE( glGetFloatv )( GLenum pname, GLfloat *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glGetFloatv( pname, params );
 }
 
@@ -1446,19 +1454,19 @@ void GL_MANGLE( glCullFace )( GLenum mode )
 	{
 		nanoglState.cullface = mode;
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glCullFace( mode );
 }
 
 void GL_MANGLE( glFrustum )( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFrustumf( left, right, bottom, top, zNear, zFar );
 }
 
 void GL_MANGLE( glClear )( GLbitfield mask )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glClear( mask );
 }
 
@@ -1474,11 +1482,10 @@ static void CheckQuadsOverflow( void )
 		size_t indices = ( ptrIndexArray - indexArray ) + ( ptrVertexAttribArray - ptrVertexAttribArrayMark ) / 4 * 6;
 
 		// 4096 just gives a small headroom in case of Begin/End blocks larger than usual...
-		if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096
-			|| indices > ( sizeof( indexArray ) / sizeof( indexArray[0] )) - 4096 )
+		if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096 || indices > ( sizeof( indexArray ) / sizeof( indexArray[0] )) - 4096 )
 		{
 			GL_MANGLE_NAME( glEnd )();
-			FlushOnStateChange( );
+			FlushOnStateChange();
 			GL_MANGLE_NAME( glBegin )( GL_QUADS );
 		}
 	}
@@ -1486,7 +1493,7 @@ static void CheckQuadsOverflow( void )
 
 void GL_MANGLE( glVertex3f )( GLfloat x, GLfloat y, GLfloat z )
 {
-	CheckQuadsOverflow( );
+	CheckQuadsOverflow();
 
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	*vert++ = x;
@@ -1502,8 +1509,7 @@ void GL_MANGLE( glColor4fv )( const GLfloat *v )
 	currentVertexAttrib.blue = (unsigned char)ClampTo255( v[2] * 255.0f );
 	currentVertexAttrib.alpha = (unsigned char)ClampTo255( v[3] * 255.0f );
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 void GL_MANGLE( glColor3ubv )( const GLubyte *v )
@@ -1513,8 +1519,7 @@ void GL_MANGLE( glColor3ubv )( const GLubyte *v )
 	currentVertexAttrib.blue = v[2];
 	currentVertexAttrib.alpha = 255;
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 void GL_MANGLE( glColor4ubv )( const GLubyte *v )
@@ -1525,8 +1530,7 @@ void GL_MANGLE( glColor4ubv )( const GLubyte *v )
 	currentVertexAttrib.blue = v[2];
 	currentVertexAttrib.alpha = v[3];
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 void GL_MANGLE( glColor3fv )( const GLfloat *v )
@@ -1536,8 +1540,7 @@ void GL_MANGLE( glColor3fv )( const GLfloat *v )
 	currentVertexAttrib.blue = (unsigned char)ClampTo255( v[2] * 255.0f );
 	currentVertexAttrib.alpha = 255;
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 // -- nicknekit: xash3d funcs --
@@ -1549,8 +1552,7 @@ void GL_MANGLE( glColor4ub )( GLubyte red, GLubyte green, GLubyte blue, GLubyte 
 	currentVertexAttrib.blue = blue;
 	currentVertexAttrib.alpha = alpha;
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 void GL_MANGLE( glColor3ub )( GLubyte red, GLubyte green, GLubyte blue )
@@ -1560,19 +1562,18 @@ void GL_MANGLE( glColor3ub )( GLubyte red, GLubyte green, GLubyte blue )
 	currentVertexAttrib.blue = blue;
 	currentVertexAttrib.alpha = 255;
 	if( skipnanogl )
-		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-				     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+		glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 }
 
 void GL_MANGLE( glNormal3fv )( const GLfloat *v )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glNormal3f( v[0], v[1], v[2] );
 }
 
 void GL_MANGLE( glCopyTexImage2D )( GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glCopyTexImage2D( target, level, internalformat, x, y, width, height, border );
 }
 
@@ -1592,18 +1593,18 @@ void GL_MANGLE( glTexSubImage1D )( GLenum target, GLint level, GLint xoffset, GL
 }
 
 void GL_MANGLE( glTexSubImage3D )( GLenum target, GLint level,
-				   GLint xoffset, GLint yoffset,
-				   GLint zoffset, GLsizei width,
-				   GLsizei height, GLsizei depth,
-				   GLenum format,
-				   GLenum type, const GLvoid *pixels )
+	GLint xoffset, GLint yoffset,
+	GLint zoffset, GLsizei width,
+	GLsizei height, GLsizei depth,
+	GLenum format,
+	GLenum type, const GLvoid *pixels )
 {
 	GL_MANGLE_NAME( glTexSubImage2D )( target, level, xoffset, yoffset, width, height, format, type, pixels );
 }
 
 GLboolean GL_MANGLE( glIsTexture )( GLuint texture )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	return glEsImpl->glIsTexture( texture );
 }
 
@@ -1625,7 +1626,7 @@ void GL_MANGLE( glTexGenfv )( GLenum coord, GLenum pname, const GLfloat *params 
 
 void GL_MANGLE( glHint )( GLenum target, GLenum mode )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glHint( target, mode );
 }
 
@@ -1643,14 +1644,14 @@ void GL_MANGLE( glBlendFunc )( GLenum sfactor, GLenum dfactor )
 
 	nanoglState.sfactor = sfactor;
 	nanoglState.dfactor = dfactor;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glBlendFunc( sfactor, dfactor );
 }
 
 void GL_MANGLE( glPopMatrix )( void )
 {
-	FlushOnStateChange( );
-	glEsImpl->glPopMatrix( );
+	FlushOnStateChange();
+	glEsImpl->glPopMatrix();
 }
 
 void GL_MANGLE( glShadeModel )( GLenum mode )
@@ -1660,14 +1661,14 @@ void GL_MANGLE( glShadeModel )( GLenum mode )
 		return;
 	}
 	nanoglState.shademodel = mode;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glShadeModel( mode );
 }
 
 void GL_MANGLE( glPushMatrix )( void )
 {
-	FlushOnStateChange( );
-	glEsImpl->glPushMatrix( );
+	FlushOnStateChange();
+	glEsImpl->glPushMatrix();
 }
 
 void GL_MANGLE( glTexEnvf )( GLenum target, GLenum pname, GLfloat param )
@@ -1687,20 +1688,20 @@ void GL_MANGLE( glTexEnvf )( GLenum target, GLenum pname, GLfloat param )
 			}
 			else
 			{
-				FlushOnStateChange( );
+				FlushOnStateChange();
 				glEsImpl->glTexEnvf( target, pname, param );
 				activetmuState->texture_env_mode.value = param;
 				return;
 			}
 		}
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexEnvf( target, pname, param );
 }
 
 void GL_MANGLE( glVertex3fv )( const GLfloat *v )
 {
-	CheckQuadsOverflow( );
+	CheckQuadsOverflow();
 
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	memcpy( vert, v, 3 * sizeof( GLfloat ));
@@ -1716,7 +1717,7 @@ void GL_MANGLE( glDepthMask )( GLboolean flag )
 			return;
 		}
 		nanoglState.depthmask = flag;
-		FlushOnStateChange( );
+		FlushOnStateChange();
 	}
 	glEsImpl->glDepthMask( flag );
 }
@@ -1733,14 +1734,14 @@ void GL_MANGLE( glBindTexture )( GLenum target, GLuint texture )
 	{
 		return;
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	activetmuState->boundtexture.value = texture;
 	glEsImpl->glBindTexture( target, texture );
 }
 
 void GL_MANGLE( glGetIntegerv )( GLenum pname, GLint *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glGetIntegerv( pname, params );
 }
 
@@ -1759,14 +1760,14 @@ void GL_MANGLE( glAlphaFunc )( GLenum func, GLclampf ref )
 	}
 	nanoglState.alphafunc = func;
 	nanoglState.alpharef = ref;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glAlphaFunc( func, ref );
 }
 
 void GL_MANGLE( glFlush )( void )
 {
-	FlushOnStateChange( );
-	glEsImpl->glFlush( );
+	FlushOnStateChange();
+	glEsImpl->glFlush();
 }
 
 void GL_MANGLE( glReadPixels )( GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels )
@@ -1777,7 +1778,7 @@ void GL_MANGLE( glReadPixels )( GLint x, GLint y, GLsizei width, GLsizei height,
 		memset( pixels, 0xff, 4 );
 		return;
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glReadPixels( x, y, width, height, format, type, pixels );
 }
 
@@ -1787,19 +1788,19 @@ void GL_MANGLE( glReadBuffer )( GLenum mode )
 
 void GL_MANGLE( glLoadMatrixf )( const GLfloat *m )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glLoadMatrixf( m );
 }
 
 void GL_MANGLE( glTexSubImage2D )( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexSubImage2D( target, level, xoffset, yoffset, width, height, format, type, pixels );
 }
 
 void GL_MANGLE( glClearColor )( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glClearColor( red, green, blue, alpha );
 }
 
@@ -1880,6 +1881,7 @@ void GL_MANGLE( glClientActiveTexture )( GLenum texture )
 	}
 	clientactivetmu = texture;
 }
+
 void GL_MANGLE( glClientActiveTextureARB )( GLenum texture )
 {
 	if( skipnanogl )
@@ -1890,26 +1892,25 @@ void GL_MANGLE( glClientActiveTextureARB )( GLenum texture )
 	clientactivetmu = texture;
 }
 
-
 void GL_MANGLE( glPolygonMode )( GLenum face, GLenum mode )
 {
 }
 
 void GL_MANGLE( glDeleteTextures )( GLsizei n, const GLuint *textures )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glDeleteTextures( n, textures );
 }
 
 void GL_MANGLE( glClearDepth )( GLclampd depth )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glClearDepthf( depth );
 }
 
 void GL_MANGLE( glClipPlane )( GLenum plane, const GLdouble *equation )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	float array[4];
 	array[0] = (GLfloat)( equation[0] );
 	array[1] = (GLfloat)( equation[1] );
@@ -1928,40 +1929,45 @@ void GL_MANGLE( glScissor )( GLint x, GLint y, GLsizei width, GLsizei height )
 	nanoglState.scissorbox[1] = y;
 	nanoglState.scissorbox[2] = width;
 	nanoglState.scissorbox[3] = height;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glScissor( x, y, width, height );
 }
 
 void GL_MANGLE( glPointSize )( GLfloat size )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glPointSize( size );
 }
 
 void GL_MANGLE( glArrayElement )( GLint i )
 {
 }
+
 void GL_MANGLE( glLineWidth )( GLfloat width )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glLineWidth( width );
 }
+
 void GL_MANGLE( glCallList )( GLuint list )
 {
 }
+
 void GL_MANGLE( glColorMask )( GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glColorMask( red, green, blue, alpha );
 }
+
 void GL_MANGLE( glStencilFunc )( GLenum func, GLint ref, GLuint mask )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glStencilFunc( func, ref, mask );
 }
+
 void GL_MANGLE( glStencilOp )( GLenum fail, GLenum zfail, GLenum zpass )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glStencilOp( fail, zfail, zpass );
 }
 
@@ -1978,12 +1984,9 @@ void GL_MANGLE( glDrawElements )( GLenum mode, GLsizei count, GLenum type, const
 	}
 	// ensure that all primitives specified between glBegin/glEnd pairs
 	// are rendered first, and that we have correct tmu in use..
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	// setup correct vertex/color/texcoord pointers
-	if( arraysValid
-	    || tmuState0.vertex_array.changed
-	    || tmuState0.color_array.changed
-	    || tmuState0.texture_coord_array.changed || tmuState0.normal_array.changed )
+	if( arraysValid || tmuState0.vertex_array.changed || tmuState0.color_array.changed || tmuState0.texture_coord_array.changed || tmuState0.normal_array.changed )
 	{
 		glEsImpl->glClientActiveTexture( GL_TEXTURE0 );
 	}
@@ -1998,9 +2001,9 @@ void GL_MANGLE( glDrawElements )( GLenum mode, GLsizei count, GLenum type, const
 			glEsImpl->glDisableClientState( GL_VERTEX_ARRAY );
 		}
 		glEsImpl->glVertexPointer( tmuState0.vertex_array.size,
-					   tmuState0.vertex_array.type,
-					   tmuState0.vertex_array.stride,
-					   tmuState0.vertex_array.ptr );
+			tmuState0.vertex_array.type,
+			tmuState0.vertex_array.stride,
+			tmuState0.vertex_array.ptr );
 		tmuState0.vertex_array.changed = GL_FALSE;
 	}
 	if( arraysValid || tmuState0.color_array.changed )
@@ -2012,14 +2015,12 @@ void GL_MANGLE( glDrawElements )( GLenum mode, GLsizei count, GLenum type, const
 		else
 		{
 			glEsImpl->glDisableClientState( GL_COLOR_ARRAY );
-			glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-					     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
-
+			glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 		}
 		glEsImpl->glColorPointer( tmuState0.color_array.size,
-					  tmuState0.color_array.type,
-					  tmuState0.color_array.stride,
-					  tmuState0.color_array.ptr );
+			tmuState0.color_array.type,
+			tmuState0.color_array.stride,
+			tmuState0.color_array.ptr );
 		tmuState0.color_array.changed = GL_FALSE;
 	}
 	if( arraysValid || tmuState0.normal_array.changed )
@@ -2033,8 +2034,8 @@ void GL_MANGLE( glDrawElements )( GLenum mode, GLsizei count, GLenum type, const
 			glEsImpl->glDisableClientState( GL_NORMAL_ARRAY );
 		}
 		glEsImpl->glNormalPointer( tmuState0.normal_array.type,
-					   tmuState0.normal_array.stride,
-					   tmuState0.normal_array.ptr );
+			tmuState0.normal_array.stride,
+			tmuState0.normal_array.ptr );
 		tmuState0.normal_array.changed = GL_FALSE;
 	}
 	if( arraysValid || tmuState0.texture_coord_array.changed )
@@ -2049,9 +2050,9 @@ void GL_MANGLE( glDrawElements )( GLenum mode, GLsizei count, GLenum type, const
 			glEsImpl->glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 		}
 		glEsImpl->glTexCoordPointer( tmuState0.texture_coord_array.size,
-					     tmuState0.texture_coord_array.type,
-					     tmuState0.texture_coord_array.stride,
-					     tmuState0.texture_coord_array.ptr );
+			tmuState0.texture_coord_array.type,
+			tmuState0.texture_coord_array.stride,
+			tmuState0.texture_coord_array.ptr );
 	}
 
 	if( arraysValid || tmuState1.texture_coord_array.changed )
@@ -2067,9 +2068,9 @@ void GL_MANGLE( glDrawElements )( GLenum mode, GLsizei count, GLenum type, const
 			glEsImpl->glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 		}
 		glEsImpl->glTexCoordPointer( tmuState1.texture_coord_array.size,
-					     tmuState1.texture_coord_array.type,
-					     tmuState1.texture_coord_array.stride,
-					     tmuState1.texture_coord_array.ptr );
+			tmuState1.texture_coord_array.type,
+			tmuState1.texture_coord_array.stride,
+			tmuState1.texture_coord_array.ptr );
 	}
 
 	arraysValid = GL_FALSE;
@@ -2140,6 +2141,7 @@ void GL_MANGLE( glEnableClientState )( GLenum array )
 		break;
 	}
 }
+
 void GL_MANGLE( glDisableClientState )( GLenum array )
 {
 	if( skipnanogl )
@@ -2202,18 +2204,15 @@ void GL_MANGLE( glDisableClientState )( GLenum array )
 		break;
 	}
 }
+
 void GL_MANGLE( glVertexPointer )( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
-
 	if( skipnanogl )
 	{
 		glEsImpl->glVertexPointer( size, type, stride, pointer );
 		return;
 	}
-	if( tmuState0.vertex_array.size == size
-	    && tmuState0.vertex_array.stride == stride
-	    && tmuState0.vertex_array.type == type
-	    && tmuState0.vertex_array.ptr == pointer )
+	if( tmuState0.vertex_array.size == size && tmuState0.vertex_array.stride == stride && tmuState0.vertex_array.type == type && tmuState0.vertex_array.ptr == pointer )
 	{
 		return;
 	}
@@ -2223,6 +2222,7 @@ void GL_MANGLE( glVertexPointer )( GLint size, GLenum type, GLsizei stride, cons
 	tmuState0.vertex_array.ptr = (GLvoid *)pointer;
 	tmuState0.vertex_array.changed = GL_TRUE;
 }
+
 void GL_MANGLE( glTexCoordPointer )( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
 	if( skipnanogl )
@@ -2239,10 +2239,7 @@ void GL_MANGLE( glTexCoordPointer )( GLint size, GLenum type, GLsizei stride, co
 	{
 		clientstate = &tmuState1;
 	}
-	if( clientstate->texture_coord_array.size == size
-	    && clientstate->texture_coord_array.stride == stride
-	    && clientstate->texture_coord_array.type == type
-	    && clientstate->texture_coord_array.ptr == pointer )
+	if( clientstate->texture_coord_array.size == size && clientstate->texture_coord_array.stride == stride && clientstate->texture_coord_array.type == type && clientstate->texture_coord_array.ptr == pointer )
 	{
 		return;
 	}
@@ -2252,12 +2249,10 @@ void GL_MANGLE( glTexCoordPointer )( GLint size, GLenum type, GLsizei stride, co
 	clientstate->texture_coord_array.ptr = (GLvoid *)pointer;
 	clientstate->texture_coord_array.changed = GL_TRUE;
 }
+
 void GL_MANGLE( glColorPointer )( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer )
 {
-	if( tmuState0.color_array.size == size
-	    && tmuState0.color_array.stride == stride
-	    && tmuState0.color_array.type == type
-	    && tmuState0.color_array.ptr == pointer )
+	if( tmuState0.color_array.size == size && tmuState0.color_array.stride == stride && tmuState0.color_array.type == type && tmuState0.color_array.ptr == pointer )
 	{
 		return;
 	}
@@ -2271,10 +2266,7 @@ void GL_MANGLE( glColorPointer )( GLint size, GLenum type, GLsizei stride, const
 void GL_MANGLE( glNormalPointer )( GLenum type, GLsizei stride, const GLvoid *pointer )
 {
 	int size = 0;
-	if( tmuState0.normal_array.size == size
-	    && tmuState0.normal_array.stride == stride
-	    && tmuState0.normal_array.type == type
-	    && tmuState0.normal_array.ptr == pointer )
+	if( tmuState0.normal_array.size == size && tmuState0.normal_array.stride == stride && tmuState0.normal_array.type == type && tmuState0.normal_array.ptr == pointer )
 	{
 		return;
 	}
@@ -2284,19 +2276,22 @@ void GL_MANGLE( glNormalPointer )( GLenum type, GLsizei stride, const GLvoid *po
 	tmuState0.normal_array.ptr = (GLvoid *)pointer;
 	tmuState0.normal_array.changed = GL_TRUE;
 }
+
 void GL_MANGLE( glPolygonOffset )( GLfloat factor, GLfloat units )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glPolygonOffset( factor, units );
 }
+
 void GL_MANGLE( glStencilMask )( GLuint mask )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glStencilMask( mask );
 }
+
 void GL_MANGLE( glClearStencil )( GLint s )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glClearStencil( s );
 }
 
@@ -2331,37 +2326,37 @@ void GL_MANGLE( glMultiTexCoord2f )( GLenum a, GLfloat b, GLfloat c )
 }*/
 void GL_MANGLE( glMultMatrixf )( const GLfloat *m )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glMultMatrixf( m );
 }
 
 void GL_MANGLE( glPixelStorei )( GLenum pname, GLint param )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glPixelStorei( pname, param );
 }
 
 void GL_MANGLE( glFogi )( GLenum pname, GLint param )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFogf( pname, param );
 }
 
 void GL_MANGLE( glFogf )( GLenum pname, GLfloat param )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFogf( pname, param );
 }
 
 void GL_MANGLE( glFogfv )( GLenum pname, const GLfloat *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFogfv( pname, params );
 }
 
 void GL_MANGLE( glGetTexParameteriv )( GLenum target, GLenum pname, GLint *params )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glGetTexParameteriv( target, pname, params );
 }
 
@@ -2372,14 +2367,12 @@ void GL_MANGLE( glTexParameteri )( GLenum target, GLenum pname, GLint param )
 	{
 		return; // not supported by opengl es
 	}
-	if(( pname == GL_TEXTURE_WRAP_S
-	     || pname == GL_TEXTURE_WRAP_T )
-	   && param == GL_CLAMP )
+	if(( pname == GL_TEXTURE_WRAP_S || pname == GL_TEXTURE_WRAP_T ) && param == GL_CLAMP )
 	{
 		param = 0x812F;
 	}
 
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexParameteri( target, pname, param );
 }
 
@@ -2389,27 +2382,26 @@ void GL_MANGLE( glTexParameterx )( GLenum target, GLenum pname, GLfixed param )
 	{
 		return; // not supported by opengl es
 	}
-	if(( pname == GL_TEXTURE_WRAP_S
-	     || pname == GL_TEXTURE_WRAP_T )
-	   && param == GL_CLAMP )
+	if(( pname == GL_TEXTURE_WRAP_S || pname == GL_TEXTURE_WRAP_T ) && param == GL_CLAMP )
 	{
 		param = 0x812F;
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexParameterx( target, pname, param );
 }
 
 void GL_MANGLE( glGenTextures )( GLsizei n, GLuint *textures )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glGenTextures( n, textures );
 }
 
 void GL_MANGLE( glFrontFace )( GLenum mode )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFrontFace( mode );
 }
+
 // End Vladimir
 
 void GL_MANGLE( glTexEnvi )( GLenum target, GLenum pname, GLint param )
@@ -2429,14 +2421,14 @@ void GL_MANGLE( glTexEnvi )( GLenum target, GLenum pname, GLint param )
 			}
 			else
 			{
-				FlushOnStateChange( );
+				FlushOnStateChange();
 				glEsImpl->glTexEnvi( target, pname, param );
 				activetmuState->texture_env_mode.value = param;
 				return;
 			}
 		}
 	}
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexEnvi( target, pname, param );
 }
 
@@ -2448,7 +2440,7 @@ void GL_MANGLE( glTexEnvfv )( GLenum target, GLenum pname, const GLfloat *param 
 		return;
 	}
 
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glTexEnvfv( target, pname, param );
 }
 
@@ -2463,12 +2455,9 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 	// are rendered first, and that we have correct tmu in use..
 	if( mode == GL_QUADS )
 		mode = GL_TRIANGLE_FAN;
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	// setup correct vertex/color/texcoord pointers
-	if( arraysValid
-	    || tmuState0.vertex_array.changed
-	    || tmuState0.color_array.changed
-	    || tmuState0.texture_coord_array.changed || tmuState0.normal_array.changed )
+	if( arraysValid || tmuState0.vertex_array.changed || tmuState0.color_array.changed || tmuState0.texture_coord_array.changed || tmuState0.normal_array.changed )
 	{
 		glEsImpl->glClientActiveTexture( GL_TEXTURE0 );
 	}
@@ -2483,9 +2472,9 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 			glEsImpl->glDisableClientState( GL_VERTEX_ARRAY );
 		}
 		glEsImpl->glVertexPointer( tmuState0.vertex_array.size,
-					   tmuState0.vertex_array.type,
-					   tmuState0.vertex_array.stride,
-					   tmuState0.vertex_array.ptr );
+			tmuState0.vertex_array.type,
+			tmuState0.vertex_array.stride,
+			tmuState0.vertex_array.ptr );
 		tmuState0.vertex_array.changed = GL_FALSE;
 	}
 	if( arraysValid || tmuState0.color_array.changed )
@@ -2497,14 +2486,12 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 		else
 		{
 			glEsImpl->glDisableClientState( GL_COLOR_ARRAY );
-			glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-					     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
-
+			glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 		}
 		glEsImpl->glColorPointer( tmuState0.color_array.size,
-					  tmuState0.color_array.type,
-					  tmuState0.color_array.stride,
-					  tmuState0.color_array.ptr );
+			tmuState0.color_array.type,
+			tmuState0.color_array.stride,
+			tmuState0.color_array.ptr );
 		tmuState0.color_array.changed = GL_FALSE;
 	}
 	if( arraysValid || tmuState0.normal_array.changed )
@@ -2518,8 +2505,8 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 			glEsImpl->glDisableClientState( GL_NORMAL_ARRAY );
 		}
 		glEsImpl->glNormalPointer( tmuState0.normal_array.type,
-					   tmuState0.normal_array.stride,
-					   tmuState0.normal_array.ptr );
+			tmuState0.normal_array.stride,
+			tmuState0.normal_array.ptr );
 		tmuState0.normal_array.changed = GL_FALSE;
 	}
 	if( arraysValid || tmuState0.texture_coord_array.changed )
@@ -2534,9 +2521,9 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 			glEsImpl->glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 		}
 		glEsImpl->glTexCoordPointer( tmuState0.texture_coord_array.size,
-					     tmuState0.texture_coord_array.type,
-					     tmuState0.texture_coord_array.stride,
-					     tmuState0.texture_coord_array.ptr );
+			tmuState0.texture_coord_array.type,
+			tmuState0.texture_coord_array.stride,
+			tmuState0.texture_coord_array.ptr );
 	}
 
 	if( arraysValid || tmuState1.texture_coord_array.changed )
@@ -2552,14 +2539,15 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 			glEsImpl->glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 		}
 		glEsImpl->glTexCoordPointer( tmuState1.texture_coord_array.size,
-					     tmuState1.texture_coord_array.type,
-					     tmuState1.texture_coord_array.stride,
-					     tmuState1.texture_coord_array.ptr );
+			tmuState1.texture_coord_array.type,
+			tmuState1.texture_coord_array.stride,
+			tmuState1.texture_coord_array.ptr );
 	}
 
 	arraysValid = GL_FALSE;
 	glEsImpl->glDrawArrays( mode, first, count );
 }
+
 /*void GL_MANGLE(glNormalPointer)(GLenum type, GLsizei stride, const void *ptr)
 {
     glEsImpl->glNormalPointer( type, stride, ptr );
@@ -2567,60 +2555,61 @@ void GL_MANGLE( glDrawArrays )( GLenum mode, GLint first, GLsizei count )
 
 void GL_MANGLE( glCopyTexSubImage2D )( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glCopyTexSubImage2D( target, level, xoffset, yoffset, x, y, width, height );
 }
 
 void GL_MANGLE( glGenFramebuffers )( GLsizei n, GLuint *framebuffers )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glGenFramebuffers( n, framebuffers );
 }
 
 void GL_MANGLE( glGenRenderbuffers )( GLsizei n, GLuint *renderbuffers )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glGenRenderbuffers( n, renderbuffers );
 }
 
 void GL_MANGLE( glBindRenderbuffer )( GLenum target, GLuint renderbuffer )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glBindRenderbuffer( target, renderbuffer );
 }
 
 void GL_MANGLE( glBindFramebuffer )( GLenum target, GLuint framebuffer )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glBindFramebuffer( target, framebuffer );
 }
 
 void GL_MANGLE( glFramebufferRenderbuffer )( GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFramebufferRenderbuffer( target, attachment, renderbuffertarget, renderbuffer );
 }
 
 void GL_MANGLE( glDeleteFramebuffers )( GLsizei n, const GLuint *framebuffers )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glDeleteFramebuffers( n, framebuffers );
 }
 
 void GL_MANGLE( glDeleteRenderbuffers )( GLsizei n, const GLuint *renderbuffers )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glDeleteRenderbuffers( n, renderbuffers );
 }
+
 void GL_MANGLE( glFramebufferTexture2D )( GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glFramebufferTexture2D( target, attachment, textarget, texture, level );
 }
 
 void GL_MANGLE( glRenderbufferStorage )( GLenum target, GLenum internalformat, GLsizei width, GLsizei height )
 {
-	FlushOnStateChange( );
+	FlushOnStateChange();
 	glEsImpl->glRenderbufferStorage( target, internalformat, width, height );
 }
 
@@ -2631,13 +2620,11 @@ void GL_MANGLE( glBindBufferARB )( GLuint target, GLuint index )
 	if( index && !sindex && !skipnanogl )
 		FlushOnStateChange();
 	glEsImpl->glDisableClientState( GL_COLOR_ARRAY );
-	glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f,
-			     currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
+	glEsImpl->glColor4f( currentVertexAttrib.red / 255.0f, currentVertexAttrib.green / 255.0f, currentVertexAttrib.blue / 255.0f, currentVertexAttrib.alpha / 255.0f );
 
 	if( target == 0x8892 )
 	{
 		skipnanogl = ( !!index ) || vboarray;
-
 	}
 	glEsImpl->glBindBuffer( target, index );
 	if( sindex && !index )
@@ -2651,7 +2638,7 @@ void GL_MANGLE( glBindBufferARB )( GLuint target, GLuint index )
 			tmuState0.texture_coord_array.changed = 1;
 			tmuState1.texture_coord_array.changed = 1;
 			arraysValid = 0;
-			ResetNanoState( );
+			ResetNanoState();
 		}
 	}
 	sindex = index;
