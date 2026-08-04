@@ -30,6 +30,9 @@ void nanoGL_Destroy( void );
 void nanoGL_Flush( void );
 void *nanoGL_GetProcAddress( const char *name );
 void nanoGL_Reset( void );
+
+// defined by the consumer application
+void *GL_GetProcAddress( const char *name );
 #ifdef __cplusplus
 }
 #endif

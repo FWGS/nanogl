@@ -191,6 +191,7 @@ static struct nanotmuState *activetmuState = &tmuState0;
 extern GlESInterface       *glEsImpl;
 
 static GLenum wrapperPrimitiveMode = GL_QUADS;
+static GLenum batchedPrimitiveMode = GL_TRIANGLES;
 GLboolean     useTexCoordArray = GL_FALSE;
 static GLenum activetmu = GL_TEXTURE0;
 static GLenum clientactivetmu = GL_TEXTURE0;
@@ -249,6 +250,7 @@ void InitGLStructs( void )
 
 	activetmuState = &tmuState0;
 	wrapperPrimitiveMode = GL_QUADS;
+	batchedPrimitiveMode = GL_TRIANGLES;
 	useTexCoordArray = GL_FALSE;
 	activetmu = GL_TEXTURE0;
 	clientactivetmu = GL_TEXTURE0;
@@ -390,7 +392,7 @@ static void FlushOnStateChange( void )
 		useMultiTexCoordArray = multitex;
 	}
 
-	glEsImpl->glDrawElements( GL_TRIANGLES, (GLsizei)( ptrIndexArray - indexArray ), GL_UNSIGNED_SHORT, indexArray );
+	glEsImpl->glDrawElements( batchedPrimitiveMode, (GLsizei)( ptrIndexArray - indexArray ), GL_UNSIGNED_SHORT, indexArray );
 
 	vertexMark = vertexCount = 0;
 	indexbase = indexCount = 0;
@@ -413,6 +415,21 @@ void nanoGL_Reset( void )
 
 void GL_MANGLE( glBegin )( GLenum mode )
 {
+	GLenum batchmode;
+
+	if( mode == GL_POINTS )
+		batchmode = GL_POINTS;
+	else if( mode == GL_LINES || mode == GL_LINE_STRIP || mode == GL_LINE_LOOP )
+		batchmode = GL_LINES;
+	else
+		batchmode = GL_TRIANGLES;
+
+	if( batchmode != batchedPrimitiveMode )
+	{
+		FlushOnStateChange( );
+		batchedPrimitiveMode = batchmode;
+	}
+
 	wrapperPrimitiveMode = mode;
 	vertexMark = vertexCount;
 	ptrVertexAttribArrayMark = ptrVertexAttribArray;
@@ -421,8 +438,11 @@ void GL_MANGLE( glBegin )( GLenum mode )
 
 void GL_MANGLE( glEnd )( void )
 {
-	vertexCount += ((unsigned char *)ptrVertexAttribArray - (unsigned char *)ptrVertexAttribArrayMark ) / sizeof( VertexAttrib );
-	if( vertexCount < 3 )
+	GLuint blockverts = ((unsigned char *)ptrVertexAttribArray - (unsigned char *)ptrVertexAttribArrayMark ) / sizeof( VertexAttrib );
+	GLuint minverts = batchedPrimitiveMode == GL_POINTS ? 1 : batchedPrimitiveMode == GL_LINES ? 2 : 3;
+
+	vertexCount += blockverts;
+	if( blockverts < minverts )
 	{
 		vertexCount = vertexMark;
 		ptrVertexAttribArray = ptrVertexAttribArrayMark;
@@ -499,6 +519,53 @@ void GL_MANGLE( glEnd )( void )
 			*ptrIndexArray++ = indexCount - 1;
 			*ptrIndexArray++ = indexCount++;
 			vertexCount += 2;
+		}
+	}
+	break;
+	case GL_POINTS:
+	{
+		int vcount = ( vertexCount - vertexMark );
+
+		for( int count = 0; count < vcount; count++ )
+			*ptrIndexArray++ = indexCount++;
+	}
+	break;
+	case GL_LINES:
+	{
+		int vcount = ( vertexCount - vertexMark ) & ~1;
+
+		for( int count = 0; count < vcount; count++ )
+			*ptrIndexArray++ = indexCount++;
+
+		if(( vertexCount - vertexMark ) & 1 )
+		{
+			vertexCount--;
+			ptrVertexAttribArray--;
+		}
+	}
+	break;
+	case GL_LINE_STRIP:
+	case GL_LINE_LOOP:
+	{
+		int vcount = (( vertexCount - vertexMark ) - 1 );
+
+		for( int count = 0; count < vcount; count++ )
+		{
+			*ptrIndexArray++ = indexCount;
+			*ptrIndexArray++ = indexCount + 1;
+			indexCount++;
+		}
+		indexCount++;
+
+		if( wrapperPrimitiveMode == GL_LINE_LOOP )
+		{
+			*ptrIndexArray++ = indexCount - 1;
+			*ptrIndexArray++ = indexbase;
+			vertexCount += vcount + 1;
+		}
+		else
+		{
+			vertexCount += vcount - 1;
 		}
 	}
 	break;
@@ -1876,6 +1943,8 @@ void GL_MANGLE( glArrayElement )( GLint i )
 }
 void GL_MANGLE( glLineWidth )( GLfloat width )
 {
+	FlushOnStateChange( );
+	glEsImpl->glLineWidth( width );
 }
 void GL_MANGLE( glCallList )( GLuint list )
 {

@@ -108,9 +108,6 @@ static const char *APIENTRY gl_unimplemented( GLenum none )
 }
 #endif
 
-// defined by the consumer application
-void *GL_GetProcAddress( const char *name );
-
 int nanoGL_Init( void )
 {
 	// load GL API calls
