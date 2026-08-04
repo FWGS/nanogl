@@ -1270,24 +1270,20 @@ void GL_MANGLE( glTexImage2D )( GLenum target, GLint level, GLint internalformat
 {
 	unsigned char *data = (unsigned char *)pixels;
 
-	if( pixels && format == GL_RGBA && (
-		    internalformat == GL_RGB
-		    || internalformat == GL_RGB8
-		    || internalformat == GL_RGB5
-		    || internalformat == GL_LUMINANCE
-		    || internalformat == GL_LUMINANCE8
-		    || internalformat == GL_LUMINANCE4 )) // strip alpha from texture
+	if( pixels && format == GL_RGBA && ( internalformat == GL_RGB || internalformat == GL_RGB8 || internalformat == GL_RGB5
+		    || internalformat == GL_LUMINANCE || internalformat == GL_LUMINANCE8 || internalformat == GL_LUMINANCE4 )) // strip alpha from texture
 	{
-		unsigned char *in = data, *out;
-		int i = 0, size = width * height * 4;
+		const union { unsigned char b[4]; unsigned int u; } alphamask = {{0, 0, 0, 255}};
+		const unsigned int *restrict in = (const unsigned int *)pixels;
+		unsigned int *restrict out;
+		int size = width * height;
 
-		data = out = (unsigned char *)malloc( size );
+		data = (unsigned char *)malloc( size * 4 );
+		out = (unsigned int *)data;
 
-		for( i = 0; i < size; i += 4, in += 4, out += 4 )
-		{
-			memcpy( out, in, 3 );
-			out[3] = 255;
-		}
+		// help compiler to vectorize the loop...
+		for( int i = 0; i < size; i++ )
+			out[i] = in[i] | alphamask.u;
 	}
 
 	internalformat = format;
