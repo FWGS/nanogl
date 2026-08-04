@@ -427,61 +427,27 @@ void GL_MANGLE( glEnd )( void )
 	break;
 	case GL_TRIANGLE_STRIP:
 	{
+		int vcount = (( vertexCount - vertexMark ) - 3 );
+
 		*ptrIndexArray++ = indexCount;
 		*ptrIndexArray++ = indexCount + 1;
 		*ptrIndexArray++ = indexCount + 2;
 		indexCount += 3;
-		int vcount = (( vertexCount - vertexMark ) - 3 );
-		if( vcount && ((long)ptrIndexArray & 0x02 ))
+
+		for( int count = 0; count < vcount; count++ )
 		{
-			*ptrIndexArray++ = indexCount - 1; // 2
-			*ptrIndexArray++ = indexCount - 2; // 1
-			*ptrIndexArray++ = indexCount;     // 3
+			if( count & 1 )
+			{
+				*ptrIndexArray++ = indexCount - 2;
+				*ptrIndexArray++ = indexCount - 1;
+			}
+			else
+			{
+				*ptrIndexArray++ = indexCount - 1;
+				*ptrIndexArray++ = indexCount - 2;
+			}
+			*ptrIndexArray++ = indexCount;
 			indexCount++;
-			vcount -= 1;
-			int odd = vcount & 1;
-			vcount /= 2;
-			unsigned int *longptr = (unsigned int *)ptrIndexArray;
-
-			for( int count = 0; count < vcount; count++ )
-			{
-				*( longptr++ ) = ( indexCount - 2 ) | (( indexCount - 1 ) << 16 );
-				*( longptr++ ) = ( indexCount ) | (( indexCount ) << 16 );
-				*( longptr++ ) = ( indexCount - 1 ) | (( indexCount + 1 ) << 16 );
-				indexCount += 2;
-			}
-			ptrIndexArray = (unsigned short *)( longptr );
-			if( odd )
-			{
-				*ptrIndexArray++ = indexCount - 2; // 2
-				*ptrIndexArray++ = indexCount - 1; // 1
-				*ptrIndexArray++ = indexCount;     // 3
-				indexCount++;
-			}
-		}
-		else
-		{
-			// already aligned
-			int odd = vcount & 1;
-			vcount /= 2;
-			unsigned int *longptr = (unsigned int *)ptrIndexArray;
-
-			for( int count = 0; count < vcount; count++ )
-			{
-				*( longptr++ ) = ( indexCount - 1 ) | (( indexCount - 2 ) << 16 );
-				*( longptr++ ) = ( indexCount ) | (( indexCount - 1 ) << 16 );
-				*( longptr++ ) = ( indexCount ) | (( indexCount + 1 ) << 16 );
-				indexCount += 2;
-			}
-			ptrIndexArray = (unsigned short *)( longptr );
-			if( odd )
-			{
-
-				*ptrIndexArray++ = indexCount - 1; // 2
-				*ptrIndexArray++ = indexCount - 2; // 1
-				*ptrIndexArray++ = indexCount;     // 3
-				indexCount++;
-			}
 		}
 		vertexCount += ( vertexCount - vertexMark - 3 ) * 2;
 	}
