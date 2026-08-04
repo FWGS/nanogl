@@ -26,7 +26,7 @@ def build(bld):
 		libs += ['LOG']
 	includes = [ '.', 'GL/' ]
 
-	bld.stlib(
+	bld.stlib(features = 'format',
 		source   = source,
 		target   = 'nanogl',
 		includes = includes,
@@ -34,7 +34,7 @@ def build(bld):
 	)
 
 	if bld.env.TESTS:
-		bld.program(features = 'test',
+		bld.program(features = 'test format',
 			source = 'tests/test_batch.c',
 			target = 'test_batch',
 			includes = includes,
