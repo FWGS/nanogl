@@ -187,9 +187,7 @@ GLboolean     useTexCoordArray = GL_FALSE;
 static GLenum activetmu = GL_TEXTURE0;
 static GLenum clientactivetmu = GL_TEXTURE0;
 
-#if defined( __MULTITEXTURE_SUPPORT__ )
-GLboolean     useMultiTexCoordArray = GL_FALSE;
-#endif
+static GLboolean useMultiTexCoordArray = GL_FALSE;
 
 static GLboolean delayedttmuchange = GL_FALSE;
 static GLenum delayedtmutarget = GL_TEXTURE0;
@@ -199,9 +197,6 @@ typedef struct VertexAttrib
 	float x;
 	float y;
 	float z;
-#if !defined( __MULTITEXTURE_SUPPORT__ )
-	float padding;
-#endif
 	unsigned char red;
 	unsigned char green;
 	unsigned char blue;
@@ -209,10 +204,8 @@ typedef struct VertexAttrib
 
 	float s;
 	float t;
-#if defined( __MULTITEXTURE_SUPPORT__ )
 	float s_multi;
 	float t_multi;
-#endif
 } VertexAttrib;
 
 static VertexAttrib vertexattribs[60000];
@@ -228,13 +221,7 @@ static VertexAttrib *ptrVertexAttribArray = NULL;
 static VertexAttrib *ptrVertexAttribArrayMark = NULL;
 
 static VertexAttrib currentVertexAttrib;
-#if defined( __MULTITEXTURE_SUPPORT__ )
 static VertexAttrib currentVertexAttribInit = {0.0f, 0.0f, 0.0f, 255, 255, 255, 255, 0.0f, 0.0f, 0.0f, 0.0f};
-#else
-static VertexAttrib currentVertexAttribInit = {
-	0.0f, 0.0f, 0.0f, 0.0f, 255, 255, 255, 255, 0.0f, 0.0f,
-};
-#endif
 static GLushort     *ptrIndexArray = NULL;
 
 static GLboolean    arraysValid = GL_FALSE;
@@ -363,20 +350,16 @@ static void FlushOnStateChange( void )
 		glEsImpl->glEnableClientState( GL_VERTEX_ARRAY );
 		glEsImpl->glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		glEsImpl->glEnableClientState( GL_COLOR_ARRAY );
-#if defined( __MULTITEXTURE_SUPPORT__ )
 		glEsImpl->glClientActiveTexture( GL_TEXTURE1 );
 		glEsImpl->glTexCoordPointer( 2, GL_FLOAT, sizeof( VertexAttrib ), &vertexattribs[0].s_multi );
 		glEsImpl->glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		glEsImpl->glClientActiveTexture( GL_TEXTURE0 );
-#endif
 		arraysValid = GL_TRUE;
 	}
 
 	glEsImpl->glDrawElements( GL_TRIANGLES, vertexCount, GL_UNSIGNED_SHORT, indexArray );
 
-#if defined( __MULTITEXTURE_SUPPORT__ )
 	useMultiTexCoordArray = GL_FALSE;
-#endif
 	vertexMark = vertexCount = 0;
 	indexbase = indexCount = 0;
 	ptrVertexAttribArrayMark = ptrVertexAttribArray = vertexattribs;
@@ -1432,11 +1415,7 @@ void GL_MANGLE( glVertex3f )( GLfloat x, GLfloat y, GLfloat z )
 	*vert++ = x;
 	*vert++ = y;
 	*vert++ = z;
-#if defined( __MULTITEXTURE_SUPPORT__ )
 	memcpy( vert, &currentVertexAttrib.red, 5 * sizeof( GLfloat ));
-#else
-	memcpy( vert + 1, &currentVertexAttrib.red, 3 * sizeof( GLfloat ));
-#endif
 }
 
 void GL_MANGLE( glColor4fv )( const GLfloat *v )
@@ -1646,11 +1625,7 @@ void GL_MANGLE( glVertex3fv )( const GLfloat *v )
 {
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	memcpy( vert, v, 3 * sizeof( GLfloat ));
-#if defined( __MULTITEXTURE_SUPPORT__ )
 	memcpy( vert + 3, &currentVertexAttrib.red, 5 * sizeof( GLfloat ));
-#else
-	memcpy( vert + 4, &currentVertexAttrib.red, 3 * sizeof( GLfloat ));
-#endif
 }
 
 void GL_MANGLE( glDepthMask )( GLboolean flag )
@@ -1696,11 +1671,7 @@ const GLubyte *GL_MANGLE( glGetString )( GLenum name )
 
 	if( name == GL_EXTENSIONS )
 	{
-#if defined( __MULTITEXTURE_SUPPORT__ )
 		sprintf((char *)nano_extensions_string, "%s %s", glEsImpl->glGetString( name ), "GL_ARB_multitexture EXT_texture_env_add" );
-#else
-		sprintf((char *)nano_extensions_string, "%s %s", glEsImpl->glGetString( name ), "EXT_texture_env_add" );
-#endif
 		return nano_extensions_string;
 	}
 	return glEsImpl->glGetString( name );
@@ -2239,10 +2210,6 @@ void GL_MANGLE( glClearStencil )( GLint s )
 	glEsImpl->glClearStencil( s );
 }
 
-#if defined( __MULTITEXTURE_SUPPORT__ )
-
-void GL_MANGLE( glMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t );
-
 void GL_MANGLE( glMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t )
 {
 	if( target == GL_TEXTURE0 )
@@ -2265,8 +2232,6 @@ void GL_MANGLE( glMultiTexCoord2f )( GLenum a, GLfloat b, GLfloat c )
 {
 	GL_MANGLE_NAME( glMultiTexCoord2fARB )( a, b, c );
 }
-
-#endif
 
 /* Vladimir  */
 /*void GL_MANGLE(glDrawArrays)( GLenum mode, int first, int count)
