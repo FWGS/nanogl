@@ -1126,12 +1126,11 @@ void GL_MANGLE( glVertex2f )( GLfloat x, GLfloat y )
 
 static inline unsigned int ClampTo255( float value )
 {
-	unsigned int retval = (unsigned int)( value );
-	if( retval > 255 )
-	{
-		retval = 255;
-	}
-	return retval;
+	if( value <= 0.0f )
+		return 0;
+	if( value >= 255.0f )
+		return 255;
+	return (unsigned int)value;
 }
 
 void GL_MANGLE( glColor3f )( GLfloat red, GLfloat green, GLfloat blue )
@@ -1392,19 +1391,19 @@ void GL_MANGLE( glClear )( GLbitfield mask )
 	glEsImpl->glClear( mask );
 }
 
-void GL_MANGLE( glVertex3f )( GLfloat x, GLfloat y, GLfloat z )
+// a1ba: xash3d-fwgs emits large glBegin/glEnd block in net_graph 2, overflowing the
+// batch buffer. quads are one of the most used primitives and each quad is standalone
+// so we can catch quad boundary and do an implicit flush and continue.
+// we can in theory do that for GL_TRIANGLES but as far as I remember, nothing seriously uses GL_TRIANGLES
+static void CheckQuadsOverflow( void )
 {
-	// a1ba: xash3d-fwgs emits large glBegin/glEnd block in net_graph 2, overflowing the
-	// batch buffer. quads are one of the most used primitives and each quad is standalone
-	// so we can catch quad boundary and do an implicit flush and continue.
-	// we can in theory do that for GL_TRIANGLES but as far as I remember, nothing seriously uses GL_TRIANGLES
 	if( wrapperPrimitiveMode == GL_QUADS && (( ptrVertexAttribArray - ptrVertexAttribArrayMark ) % 4 ) == 0 )
 	{
 		// indices aren't written until glEnd, so try to calculate the final indices size
 		size_t indices = ( ptrIndexArray - indexArray ) + ( ptrVertexAttribArray - ptrVertexAttribArrayMark ) / 4 * 6;
 
-		// 4096 just gives a small headroom in case of Begin/End blocks larger than usual...	
-		if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096 
+		// 4096 just gives a small headroom in case of Begin/End blocks larger than usual...
+		if( ptrVertexAttribArray - vertexattribs > ( sizeof( vertexattribs ) / sizeof( vertexattribs[0] )) - 4096
 			|| indices > ( sizeof( indexArray ) / sizeof( indexArray[0] )) - 4096 )
 		{
 			GL_MANGLE_NAME( glEnd )();
@@ -1412,6 +1411,11 @@ void GL_MANGLE( glVertex3f )( GLfloat x, GLfloat y, GLfloat z )
 			GL_MANGLE_NAME( glBegin )( GL_QUADS );
 		}
 	}
+}
+
+void GL_MANGLE( glVertex3f )( GLfloat x, GLfloat y, GLfloat z )
+{
+	CheckQuadsOverflow( );
 
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	*vert++ = x;
@@ -1625,6 +1629,8 @@ void GL_MANGLE( glTexEnvf )( GLenum target, GLenum pname, GLfloat param )
 
 void GL_MANGLE( glVertex3fv )( const GLfloat *v )
 {
+	CheckQuadsOverflow( );
+
 	GLfloat *vert = (GLfloat *)ptrVertexAttribArray++;
 	memcpy( vert, v, 3 * sizeof( GLfloat ));
 	memcpy( vert + 3, &currentVertexAttrib.red, 5 * sizeof( GLfloat ));
