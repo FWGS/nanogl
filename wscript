@@ -32,3 +32,11 @@ def build(bld):
 		includes = includes,
 		use      = libs
 	)
+
+	if bld.env.TESTS:
+		bld.program(features = 'test',
+			source = 'tests/test_batch.c',
+			target = 'test_batch',
+			includes = includes,
+			use = ['nanogl'] + libs,
+			install_path = None)
