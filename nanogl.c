@@ -88,6 +88,8 @@ NULL };
 
 GlESInterface *glEsImpl = NULL;
 
+char *nano_extensions_string = NULL;
+
 #ifdef WIN32
 static void APIENTRY gl_unimplemented( GLenum none )
 {
@@ -162,11 +164,33 @@ int nanoGL_Init( void )
 
 	InitGLStructs();
 
-	// it has loaded something, maybe it will work
-	if( count > 10 )
-		return 1;
-	else
+	free( nano_extensions_string );
+	nano_extensions_string = NULL;
+
+	// just a lazy sanity check
+	if( count < 10 )
 		return 0;
+
+	const char *ext = (const char *)glEsImpl->glGetString( GL_EXTENSIONS );
+	const char *add = "GL_ARB_multitexture EXT_texture_env_add";
+
+	if( !ext )
+		ext = "";
+
+	size_t extlen = strlen( ext );
+	size_t addlen = strlen( add );
+	size_t len = extlen + addlen + 2;
+
+	nano_extensions_string = malloc( len );
+	if( !nano_extensions_string )
+		return 0;
+
+	strcpy( nano_extensions_string, ext );
+	nano_extensions_string[extlen] = ' ';
+	strcpy( &nano_extensions_string[extlen+1], add );
+
+	// it has loaded something, maybe it will work
+	return 1;
 }
 
 void nanoGL_Destroy( void )
@@ -174,4 +198,6 @@ void nanoGL_Destroy( void )
 	LOGD( "nanoGL_Destroy" );
 	free( glEsImpl );
 	glEsImpl = NULL;
+	free( nano_extensions_string );
+	nano_extensions_string = NULL;
 }

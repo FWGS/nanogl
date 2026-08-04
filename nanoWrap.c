@@ -1667,15 +1667,10 @@ void GL_MANGLE( glGetIntegerv )( GLenum pname, GLint *params )
 	glEsImpl->glGetIntegerv( pname, params );
 }
 
-GLubyte nano_extensions_string[4096];
 const GLubyte *GL_MANGLE( glGetString )( GLenum name )
 {
-
-	if( name == GL_EXTENSIONS )
-	{
-		sprintf((char *)nano_extensions_string, "%s %s", glEsImpl->glGetString( name ), "GL_ARB_multitexture EXT_texture_env_add" );
-		return nano_extensions_string;
-	}
+	if( name == GL_EXTENSIONS && nano_extensions_string )
+		return (const GLubyte *)nano_extensions_string;
 	return glEsImpl->glGetString( name );
 }
 
