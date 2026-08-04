@@ -21,7 +21,7 @@ def configure(conf):
 	return
 
 def build(bld):
-	source = bld.path.ant_glob(['*.cpp'])
+	source = bld.path.ant_glob(['*.c'])
 	libs = ['werror']
 	if bld.env.DEST_OS2 == 'android':
 		libs += ['LOG']

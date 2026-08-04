@@ -22,61 +22,33 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define __GLESINTERFACE_H__
 
 #if !defined( __WINS__ )
-#if defined( __TARGET_FPU_VFP )
-#pragma softfp_linkage
+	#if defined( __TARGET_FPU_VFP )
+		#pragma softfp_linkage
+	#endif
 #endif
-#endif
-
 
 #ifdef _WIN32
-#include <windows.h> // APIENTRY
+	#include <windows.h> // APIENTRY
 #endif
 
 #ifdef SOFTFP_LINK
-#define S __attribute__(( pcs( "aapcs" )))
+	#define S __attribute__(( pcs( "aapcs" )))
 #else
-#define S
+	#define S
 #endif
 
 #ifndef APIENTRY
-#ifdef _MSC_VER
-#define APIENTRY WINAPI
-#else
-#define APIENTRY
-#endif
+	#ifdef _MSC_VER
+		#define APIENTRY WINAPI
+	#else
+		#define APIENTRY
+	#endif
 #endif
 
 typedef void ( APIENTRY *GL_DEBUG_PROC_KHR )( unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char *message, void *userParam );
 
-struct GlESInterface
+typedef struct GlESInterface
 {
-	int ( *eglChooseConfig )( int dpy, const int *attrib_list, int *configs, int config_size, int *num_config ) S;
-	int ( *eglCopyBuffers )( int dpy, int surface, void *target ) S;
-	int ( *eglCreateContext )( int dpy, int config, int share_list, const int *attrib_list ) S;
-	int ( *eglCreatePbufferSurface )( int dpy, int config, const int *attrib_list ) S;
-	int ( *eglCreatePixmapSurface )( int dpy, int config, void *pixmap, const int *attrib_list ) S;
-	int ( *eglCreateWindowSurface )( int dpy, int config, void *window, const int *attrib_list ) S;
-	int ( *eglDestroyContext )( int dpy, int ctx ) S;
-	int ( *eglDestroySurface )( int dpy, int surface ) S;
-	int ( *eglGetConfigAttrib )( int dpy, int config, int attribute, int *value ) S;
-	int ( *eglGetConfigs )( int dpy, int *configs, int config_size, int *num_config ) S;
-	int ( *eglGetCurrentContext )( void ) S;
-	int ( *eglGetCurrentDisplay )( void ) S;
-	int ( *eglGetCurrentSurface )( int readdraw ) S;
-	int ( *eglGetDisplay )( int display ) S;
-	int ( *eglGetError )( void ) S;
-
-	void( *( *eglGetProcAddress )( const char *procname ))( ... ) S;
-
-	int ( *eglInitialize )( int dpy, int *major, int *minor ) S;
-	int ( *eglMakeCurrent )( int dpy, int draw, int read, int ctx ) S;
-	int ( *eglQueryContext )( int dpy, int ctx, int attribute, int *value ) S;
-	const char *( *eglQueryString )( int dpy, int name ) S;
-	int ( *eglQuerySurface )( int dpy, int surface, int attribute, int *value ) S;
-	int ( *eglSwapBuffers )( int dpy, int draw ) S;
-	int ( *eglTerminate )( int dpy ) S;
-	int ( *eglWaitGL )( void ) S;
-	int ( *eglWaitNative )( int engine ) S;
 	void( APIENTRY * glActiveTexture )( unsigned int texture ) S;
 	void( APIENTRY * glAlphaFunc )( unsigned int func, float ref ) S;
 	void( APIENTRY * glAlphaFuncx )( unsigned int func, int ref ) S;
@@ -184,7 +156,6 @@ struct GlESInterface
 	void( APIENTRY * glTranslatex )( int x, int y, int z ) S;
 	void( APIENTRY * glVertexPointer )( int size, unsigned int type, int stride, const void *pointer ) S;
 	void( APIENTRY * glViewport )( int x, int y, int width, int height ) S;
-	int ( *eglSwapInterval )( int dpy, int interval ) S;
 	void( APIENTRY * glBindBuffer )( unsigned int target, unsigned int buffer ) S;
 	void( APIENTRY * glBufferData )( unsigned int target, int size, const void *data, unsigned int usage ) S;
 	void( APIENTRY * glBufferSubData )( unsigned int target, int offset, int size, const void *data ) S;
@@ -225,10 +196,6 @@ struct GlESInterface
 	void( APIENTRY * glTexParameteriv )( unsigned int target, unsigned int pname, const int *params ) S;
 	void( APIENTRY * glTexParameterxv )( unsigned int target, unsigned int pname, const int *params ) S;
 
-	int ( *eglBindTexImage )( int dpy, int surface, int buffer ) S;
-	int ( *eglReleaseTexImage )( int dpy, int surface, int buffer ) S;
-	int ( *eglSurfaceAttrib )( int dpy, int surface, int attribute, int value ) S;
-
 #ifdef USE_CORE_PROFILE
 	void( APIENTRY * glOrtho )( double left, double right, double bottom, double top, double zNear, double zFar ) S;
 	void( APIENTRY * glDepthRange )( double zNear, double zFar ) S;
@@ -255,11 +222,12 @@ struct GlESInterface
 
 	void( APIENTRY * glTexGenfvOES )( unsigned int coord, unsigned int pname, const float *params ) S;
 	void( APIENTRY * glTexGeniOES )( unsigned int coord, unsigned int pname, int param ) S;
-};
+} GlESInterface;
+
 #if !defined( __WINS__ )
-#if defined( __TARGET_FPU_VFP )
-#pragma no_softfp_linkage
-#endif
+	#if defined( __TARGET_FPU_VFP )
+		#pragma no_softfp_linkage
+	#endif
 #endif
 
 #undef S

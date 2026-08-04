@@ -25,10 +25,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "gl.h"
 #include "glesinterface.h"
 #include "nanogl.h"
+#include "nanogl_private.h"
 
 #define GL_TEXTURE0_ARB 0x84C0
 #define GL_TEXTURE1_ARB 0x84C1
@@ -189,17 +191,10 @@ static GLenum clientactivetmu = GL_TEXTURE0;
 GLboolean     useMultiTexCoordArray = GL_FALSE;
 #endif
 
-#if !defined( __WINS__ )
-// #define __FORCEINLINE __forceinline
-#define __FORCEINLINE inline
-#else
-#define __FORCEINLINE
-#endif
-
 static GLboolean delayedttmuchange = GL_FALSE;
 static GLenum delayedtmutarget = GL_TEXTURE0;
 
-struct VertexAttrib
+typedef struct VertexAttrib
 {
 	float x;
 	float y;
@@ -218,7 +213,7 @@ struct VertexAttrib
 	float s_multi;
 	float t_multi;
 #endif
-};
+} VertexAttrib;
 
 static VertexAttrib vertexattribs[60000];
 
@@ -246,7 +241,7 @@ static GLboolean    arraysValid = GL_FALSE;
 
 static GLboolean    skipnanogl;
 
-void InitGLStructs( )
+void InitGLStructs( void )
 {
 	ptrVertexAttribArray = vertexattribs;
 	ptrVertexAttribArrayMark = ptrVertexAttribArray;
@@ -271,7 +266,7 @@ void InitGLStructs( )
 	arraysValid = GL_FALSE;
 }
 
-void ResetNanoState( )
+static void ResetNanoState( void )
 {
 
 	if( tmuState0.color_array.enabled )
@@ -344,7 +339,7 @@ void ResetNanoState( )
 	skipnanogl = GL_FALSE;
 }
 
-void FlushOnStateChange( )
+static void FlushOnStateChange( void )
 {
 	if( skipnanogl )
 		return;
@@ -391,12 +386,12 @@ void FlushOnStateChange( )
 	useTexCoordArray = GL_FALSE;
 }
 
-void nanoGL_Flush( )
+void nanoGL_Flush( void )
 {
 	FlushOnStateChange( );
 }
 
-void nanoGL_Reset( )
+void nanoGL_Reset( void )
 {
 	ResetNanoState( );
 }
@@ -1148,7 +1143,7 @@ void GL_MANGLE( glVertex2f )( GLfloat x, GLfloat y )
 	GL_MANGLE_NAME( glVertex3f )( x, y, 0.0f );
 }
 
-__FORCEINLINE unsigned int ClampTo255( float value )
+static inline unsigned int ClampTo255( float value )
 {
 	unsigned int retval = (unsigned int)( value );
 	if( retval > 255 )
@@ -1319,7 +1314,7 @@ void GL_MANGLE( glTexImage2D )( GLenum target, GLint level, GLint internalformat
 		free( data );
 }
 
-void GL_MANGLE( glDrawBuffer )( GLenum /*mode*/ )
+void GL_MANGLE( glDrawBuffer )( GLenum mode )
 {
 }
 
@@ -1735,7 +1730,7 @@ void GL_MANGLE( glReadPixels )( GLint x, GLint y, GLsizei width, GLsizei height,
 	glEsImpl->glReadPixels( x, y, width, height, format, type, pixels );
 }
 
-void GL_MANGLE( glReadBuffer )( GLenum /*mode*/ )
+void GL_MANGLE( glReadBuffer )( GLenum mode )
 {
 }
 
@@ -2246,7 +2241,7 @@ void GL_MANGLE( glClearStencil )( GLint s )
 
 #if defined( __MULTITEXTURE_SUPPORT__ )
 
-extern "C" void GL_MANGLE( glMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t );
+void GL_MANGLE( glMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t );
 
 void GL_MANGLE( glMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t )
 {
@@ -2261,7 +2256,7 @@ void GL_MANGLE( glMultiTexCoord2fARB )( GLenum target, GLfloat s, GLfloat t )
 	}
 }
 
-void GL_MANGLE( glMultiTexCoord3fARB )( GLenum a, GLfloat b, GLfloat c, GLfloat )
+void GL_MANGLE( glMultiTexCoord3fARB )( GLenum a, GLfloat b, GLfloat c, GLfloat r )
 {
 	return GL_MANGLE_NAME( glMultiTexCoord2fARB )( a, b, c );
 }

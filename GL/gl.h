@@ -657,7 +657,7 @@ void   GL_MANGLE( glVertexPointer )( GLint size, GLenum type, GLsizei stride, co
 void   GL_MANGLE( glTexCoordPointer )( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer );
 void   GL_MANGLE( glColorPointer )( GLint size, GLenum type, GLsizei stride, const GLvoid *pointer );
 void   GL_MANGLE( glPolygonOffset )( GLfloat factor, GLfloat units );
-void   GL_MANGLE( glClearDepth )( GLclampf depth );
+void   GL_MANGLE( glClearDepth )( GLclampd depth );
 void   GL_MANGLE( glDeleteTextures )( GLsizei n, const GLuint *textures );
 void   GL_MANGLE( glTexParameterfv )( GLenum target, GLenum pname, const GLfloat *params );
 void   GL_MANGLE( glStencilMask )( GLuint mask );

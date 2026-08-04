@@ -1,32 +1,3 @@
-    "eglChooseConfig",
-    "eglCopyBuffers",
-    "eglCreateContext",
-    "eglCreatePbufferSurface",
-    "eglCreatePixmapSurface",
-    "eglCreateWindowSurface",
-    "eglDestroyContext",
-    "eglDestroySurface",
-    "eglGetConfigAttrib",
-    "eglGetConfigs",
-    "eglGetCurrentContext",
-    "eglGetCurrentDisplay",
-    "eglGetCurrentSurface",
-    "eglGetDisplay",
-    "eglGetError",
-
-    "eglGetProcAddress",
-
-    "eglInitialize",
-    "eglMakeCurrent",
-    "eglQueryContext",
-    "eglQueryString",
-    "eglQuerySurface",
-    "eglSwapBuffers",
-    "eglTerminate",
-    "eglWaitGL",
-    "eglWaitNative",
-
-
     "glActiveTexture",
     "glAlphaFunc",
     "glAlphaFuncx",
@@ -134,7 +105,6 @@
     "glTranslatex",
     "glVertexPointer",
     "glViewport",
-    "eglSwapInterval",
     "glBindBuffer",
     "glBufferData",
     "glBufferSubData",
@@ -174,17 +144,10 @@
     "glTexParameteri",
     "glTexParameteriv",
     "glTexParameterxv",
-
-
-    "eglBindTexImage",
-    "eglReleaseTexImage",
-    "eglSurfaceAttrib",
-
 #ifdef USE_CORE_PROFILE
     "glOrtho",
     "glDepthRange",
 #endif
-
 // Rikku2000: Light
 	"glColorMaterial",
 
