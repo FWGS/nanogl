@@ -77,6 +77,10 @@ struct nanoState
 	GLenum    sfactor;
 	GLenum    dfactor;
 	GLenum    matrixmode;
+	GLenum    alphafunc;
+	GLclampf  alpharef;
+	GLint     viewport[4];
+	GLint     scissorbox[4];
 };
 
 static struct nanoState nanoglState;
@@ -123,6 +127,10 @@ static struct nanoState nanoglInitState =
 	GL_ONE,
 	GL_ZERO,
 	GL_MODELVIEW,
+	GL_ALWAYS,
+	0.0f,
+	{-1, -1, -1, -1},
+	{-1, -1, -1, -1},
 };
 
 struct booleanstate
@@ -341,6 +349,8 @@ static void FlushOnStateChange( void )
 	if( !vertexCount )
 		return;
 
+	GLboolean multitex = tmuState1.texture_2d.value;
+
 	if( !arraysValid )
 	{
 		glEsImpl->glClientActiveTexture( GL_TEXTURE0 );
@@ -351,15 +361,37 @@ static void FlushOnStateChange( void )
 		glEsImpl->glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		glEsImpl->glEnableClientState( GL_COLOR_ARRAY );
 		glEsImpl->glClientActiveTexture( GL_TEXTURE1 );
-		glEsImpl->glTexCoordPointer( 2, GL_FLOAT, sizeof( VertexAttrib ), &vertexattribs[0].s_multi );
-		glEsImpl->glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		if( multitex )
+		{
+			glEsImpl->glTexCoordPointer( 2, GL_FLOAT, sizeof( VertexAttrib ), &vertexattribs[0].s_multi );
+			glEsImpl->glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
+		else
+		{
+			glEsImpl->glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
 		glEsImpl->glClientActiveTexture( GL_TEXTURE0 );
+		useMultiTexCoordArray = multitex;
 		arraysValid = GL_TRUE;
+	}
+	else if( multitex != useMultiTexCoordArray )
+	{
+		glEsImpl->glClientActiveTexture( GL_TEXTURE1 );
+		if( multitex )
+		{
+			glEsImpl->glTexCoordPointer( 2, GL_FLOAT, sizeof( VertexAttrib ), &vertexattribs[0].s_multi );
+			glEsImpl->glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
+		else
+		{
+			glEsImpl->glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+		}
+		glEsImpl->glClientActiveTexture( GL_TEXTURE0 );
+		useMultiTexCoordArray = multitex;
 	}
 
 	glEsImpl->glDrawElements( GL_TRIANGLES, vertexCount, GL_UNSIGNED_SHORT, indexArray );
 
-	useMultiTexCoordArray = GL_FALSE;
 	vertexMark = vertexCount = 0;
 	indexbase = indexCount = 0;
 	ptrVertexAttribArrayMark = ptrVertexAttribArray = vertexattribs;
@@ -1123,6 +1155,14 @@ void GL_MANGLE( glTexCoord2f )( GLfloat s, GLfloat t )
 
 void GL_MANGLE( glViewport )( GLint x, GLint y, GLsizei width, GLsizei height )
 {
+	if( !skipnanogl && nanoglState.viewport[0] == x && nanoglState.viewport[1] == y && nanoglState.viewport[2] == width && nanoglState.viewport[3] == height )
+	{
+		return;
+	}
+	nanoglState.viewport[0] = x;
+	nanoglState.viewport[1] = y;
+	nanoglState.viewport[2] = width;
+	nanoglState.viewport[3] = height;
 	FlushOnStateChange( );
 	glEsImpl->glViewport( x, y, width, height );
 }
@@ -1641,6 +1681,12 @@ const GLubyte *GL_MANGLE( glGetString )( GLenum name )
 
 void GL_MANGLE( glAlphaFunc )( GLenum func, GLclampf ref )
 {
+	if( !skipnanogl && nanoglState.alphafunc == func && nanoglState.alpharef == ref )
+	{
+		return;
+	}
+	nanoglState.alphafunc = func;
+	nanoglState.alpharef = ref;
 	FlushOnStateChange( );
 	glEsImpl->glAlphaFunc( func, ref );
 }
@@ -1802,6 +1848,14 @@ void GL_MANGLE( glClipPlane )( GLenum plane, const GLdouble *equation )
 
 void GL_MANGLE( glScissor )( GLint x, GLint y, GLsizei width, GLsizei height )
 {
+	if( !skipnanogl && nanoglState.scissorbox[0] == x && nanoglState.scissorbox[1] == y && nanoglState.scissorbox[2] == width && nanoglState.scissorbox[3] == height )
+	{
+		return;
+	}
+	nanoglState.scissorbox[0] = x;
+	nanoglState.scissorbox[1] = y;
+	nanoglState.scissorbox[2] = width;
+	nanoglState.scissorbox[3] = height;
 	FlushOnStateChange( );
 	glEsImpl->glScissor( x, y, width, height );
 }
